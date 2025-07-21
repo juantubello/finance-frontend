@@ -1,0 +1,49 @@
+version: '3.8'
+
+services:
+  finance-app:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+    restart: unless-stopped
+    profiles:
+      - prod
+
+  # Development service with hot reload
+  finance-app-dev:
+    build: 
+      context: .
+      dockerfile: Dockerfile.dev
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - NEXT_PUBLIC_USE_API=1
+      - NEXT_PUBLIC_API_BASE_URL=http://192.168.1.11:8080
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - /app/.next
+    profiles:
+      - dev
+    restart: unless-stopped
+    
+  # Optional: Add a database service for future use
+  # postgres:
+  #   image: postgres:15-alpine
+  #   environment:
+  #     POSTGRES_DB: finance_app
+  #     POSTGRES_USER: finance_user
+  #     POSTGRES_PASSWORD: finance_password
+  #   ports:
+  #     - "5432:5432"
+  #   volumes:
+  #     - postgres_data:/var/lib/postgresql/data
+  #   restart: unless-stopped
+
+# volumes:
+#   postgres_data:
