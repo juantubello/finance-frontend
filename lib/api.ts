@@ -34,16 +34,12 @@ export interface RecentExpensesResponse {
 }
 
 export interface BalanceResponse {
-  balance: {
-    total_income: number
+    balance: number
+    formatted_balance: string
     total_expenses: number
-    total_card_expenses: number
-    net_balance: number
-    formatted_total_income: string
-    formatted_total_expenses: string
-    formatted_total_card_expenses: string
-    formatted_net_balance: string
-  }
+    formatted_expenses: string
+    total_incomes: number
+    formatted_incomes: string
 }
 
 // Generate dynamic colors for categories
@@ -198,28 +194,7 @@ export async function getIncomes(year: number, month: number): Promise<IncomeDat
   }
 }
 
-export async function getBalance(year?: number, month?: number) {
-  if (!USE_API) {
-    // Calculate balance from hardcoded data
-    const totalExpenses = expensesData.Expenses.reduce((sum, expense) => sum + expense.amount, 0)
-    const totalIncome = incomeData.income_total
-    const totalCardExpenses = cardsData.reduce((sum, card) => sum + card.total_ars, 0)
-    const balance = totalIncome - totalExpenses - totalCardExpenses
-
-    return {
-      balance: {
-        total_income: totalIncome,
-        total_expenses: totalExpenses,
-        total_card_expenses: totalCardExpenses,
-        net_balance: balance,
-        formatted_total_income: `$${totalIncome.toLocaleString("es-AR", { minimumFractionDigits: 2 })}`,
-        formatted_total_expenses: `$${totalExpenses.toLocaleString("es-AR", { minimumFractionDigits: 2 })}`,
-        formatted_total_card_expenses: `$${totalCardExpenses.toLocaleString("es-AR", { minimumFractionDigits: 2 })}`,
-        formatted_net_balance: `$${Math.abs(balance).toLocaleString("es-AR", { minimumFractionDigits: 2 })}`,
-      },
-    }
-  }
-
+export async function getBalance(year?: number, month?: number): Promise<BalanceResponse> {
   try {
     let url = `${API_BASE_URL}/balance`
 
@@ -236,23 +211,13 @@ export async function getBalance(year?: number, month?: number) {
     return data
   } catch (error) {
     console.error("Error fetching balance:", error)
-    // Return hardcoded calculation as fallback
-    const totalExpenses = expensesData.Expenses.reduce((sum, expense) => sum + expense.amount, 0)
-    const totalIncome = incomeData.income_total
-    const totalCardExpenses = cardsData.reduce((sum, card) => sum + card.total_ars, 0)
-    const balance = totalIncome - totalExpenses - totalCardExpenses
-
     return {
-      balance: {
-        total_income: totalIncome,
-        total_expenses: totalExpenses,
-        total_card_expenses: totalCardExpenses,
-        net_balance: balance,
-        formatted_total_income: `$${totalIncome.toLocaleString("es-AR", { minimumFractionDigits: 2 })}`,
-        formatted_total_expenses: `$${totalExpenses.toLocaleString("es-AR", { minimumFractionDigits: 2 })}`,
-        formatted_total_card_expenses: `$${totalCardExpenses.toLocaleString("es-AR", { minimumFractionDigits: 2 })}`,
-        formatted_net_balance: `$${Math.abs(balance).toLocaleString("es-AR", { minimumFractionDigits: 2 })}`,
-      },
+        balance: 0,
+        formatted_balance: "$0",
+        total_expenses: 0,
+        formatted_expenses: "$0",
+        total_incomes: 0,
+        formatted_incomes: "$0",
     }
   }
 }
