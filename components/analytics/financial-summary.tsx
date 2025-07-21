@@ -97,7 +97,7 @@ export function FinancialSummary() {
           </div>
           <div className="text-sm text-gray-300">
             {balanceData.balance > 0
-              ? "Available funds"
+              ? "Pesos liquidos disponibles"
               : balanceData.balance < 0
                 ? "Deficit amount"
                 : "Break even"}
@@ -110,7 +110,7 @@ export function FinancialSummary() {
           <div className="bg-gradient-to-br from-green-600/20 to-green-800/20 backdrop-blur-sm border border-green-500/20 rounded-2xl p-4">
             <div className="flex items-center gap-2 mb-3">
               <TrendingUp className="w-5 h-5 text-green-400" />
-              <span className="text-xs text-green-300 font-medium">INGRESO</span>
+              <span className="text-xs text-green-300 font-medium">INGRESO MENSUAL</span>
             </div>
             <div className="text-xl font-bold text-white mb-1">{balanceData.formatted_incomes}</div>
           </div>
@@ -119,7 +119,7 @@ export function FinancialSummary() {
           <div className="bg-gradient-to-br from-red-600/20 to-red-800/20 backdrop-blur-sm border border-red-500/20 rounded-2xl p-4">
             <div className="flex items-center gap-2 mb-3">
               <Receipt className="w-5 h-5 text-red-400" />
-              <span className="text-xs text-red-300 font-medium">GASTOS</span>
+              <span className="text-xs text-red-300 font-medium">GASTOS EFECTIVO/DEBITO</span>
             </div>
             <div className="text-xl font-bold text-white mb-1">{balanceData.formatted_expenses}</div>
           </div>
@@ -129,7 +129,7 @@ export function FinancialSummary() {
         <div className="bg-gradient-to-br from-blue-600/20 to-purple-600/20 backdrop-blur-sm border border-blue-500/20 rounded-2xl p-6 mb-6">
           <div className="flex items-center gap-2 mb-4">
             <TrendingDown className="w-5 h-5 text-blue-400" />
-            <span className="text-sm text-blue-300 font-medium">Gasto total tarjetas</span>
+            <span className="text-sm text-blue-300 font-medium">Gasto tarjetas VISA + MASTERCARD</span>
           </div>
 
           <div className="grid grid-cols-2 gap-6">

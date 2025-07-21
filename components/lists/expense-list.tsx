@@ -2,10 +2,11 @@
 
 import { useState, useMemo, useEffect } from "react"
 import { Search, Filter, X, ChevronDown, ChevronUp, Check } from "lucide-react"
-import { getExpenses } from "@/lib/api"
+import { getExpenses, getExpensesSummary } from "@/lib/api"
 import { useDateFilter } from "@/lib/context/date-filter-context"
 import { getExpenseCategories, categorizeExpense } from "@/lib/utils"
 import type { ExpensesData } from "@/lib/types"
+import type { CategorySpending } from "@/lib/types"
 
 export function ExpenseList() {
   const { dateFilter } = useDateFilter()
@@ -15,6 +16,12 @@ export function ExpenseList() {
   const [selectedCategories, setSelectedCategories] = useState<string[]>([])
   const [showCategoryModal, setShowCategoryModal] = useState(false)
   const [showFilters, setShowFilters] = useState(true)
+  const [summaryData, setSummaryData] = useState<{
+    total: number
+    formatted_total: string
+    period: string
+    types_summary: CategorySpending[]
+  } | null>(null)
 
   useEffect(() => {
     const fetchData = async () => {
@@ -22,6 +29,10 @@ export function ExpenseList() {
       try {
         const data = await getExpenses(dateFilter.year, dateFilter.month)
         setExpensesData(data)
+
+        const dataSummary = await getExpensesSummary(dateFilter.year, dateFilter.month)
+        setSummaryData(dataSummary)
+
       } catch (error) {
         console.error("Error loading expenses:", error)
       } finally {
@@ -46,9 +57,9 @@ export function ExpenseList() {
       "Traslado (Uber - Taxi)": "bg-yellow-600/20 text-yellow-300 border-yellow-500/20",
       Delivery: "bg-orange-600/20 text-orange-300 border-orange-500/20",
       "Cafe (Amelia/Posta etc)": "bg-purple-600/20 text-purple-300 border-purple-500/20",
-      Supermarket: "bg-green-600/20 text-green-300 border-green-500/20",
-      Transportation: "bg-blue-600/20 text-blue-300 border-blue-500/20",
-      Entertainment: "bg-red-600/20 text-red-300 border-red-500/20",
+      "Comida y vivienda": "bg-green-600/20 text-green-300 border-green-500/20",
+      Otro: "bg-blue-600/20 text-blue-300 border-blue-500/20",
+      "Comida fuera de casa": "bg-red-600/20 text-red-300 border-red-500/20",
     }
     return colors[type] || "bg-gray-600/20 text-gray-300 border-gray-500/20"
   }
@@ -110,6 +121,14 @@ export function ExpenseList() {
 
   return (
     <div className="px-6 pb-6">
+
+      {      /* Total Expenses Summary */}
+      <div className="bg-gradient-to-br from-red-600/20 to-red-800/20 backdrop-blur-sm border border-red-500/20 rounded-2xl p-4 mb-6">
+        <h3 className="text-sm font-medium text-red-300 mb-1">Gastos efectivo/débito</h3>
+        <div className="text-2xl font-bold text-white">{summaryData?.formatted_total}</div>
+        <p className="text-sm text-red-200 mt-1">{expensesData.Expenses.length} gastos</p>
+      </div>
+
       {/* Collapsible Filters Section */}
       <div className="bg-gray-800/80 backdrop-blur-sm border border-gray-700/50 rounded-2xl p-4 mb-4 shadow-xl">
         <div className="flex items-center justify-between mb-3">
@@ -173,10 +192,10 @@ export function ExpenseList() {
             <div className="flex items-center justify-between text-sm">
               <div className="flex items-center gap-4">
                 <span className="text-gray-400">
-                  {filteredExpenses.length} of {expensesData.Expenses.length} expenses
+                  {filteredExpenses.length} de {expensesData.Expenses.length} gastos
                 </span>
                 <div className="text-blue-400 font-semibold">
-                  Filtered Total: ${filteredTotal.toLocaleString("es-AR", { minimumFractionDigits: 2 })}
+                  Total filtrado: ${filteredTotal.toLocaleString("es-AR", { minimumFractionDigits: 2 })}
                 </div>
               </div>
               {(searchTerm || selectedCategories.length > 0) && (
@@ -188,7 +207,7 @@ export function ExpenseList() {
                   className="flex items-center gap-1 px-2 py-1 bg-gray-700 text-gray-300 rounded-full hover:bg-gray-600"
                 >
                   <X className="w-3 h-3" />
-                  Clear filters
+                  limpiar filtros
                 </button>
               )}
             </div>
@@ -205,7 +224,7 @@ export function ExpenseList() {
           >
             <div className="p-4 border-b border-gray-600 flex-shrink-0">
               <div className="flex items-center justify-between">
-                <h3 className="text-lg font-semibold text-white">Select Categories</h3>
+                <h3 className="text-lg font-semibold text-white">Selecion de categorias</h3>
                 <button
                   onClick={() => setShowCategoryModal(false)}
                   className="text-gray-400 hover:text-white transition-colors"
@@ -215,10 +234,10 @@ export function ExpenseList() {
               </div>
               <div className="flex items-center gap-2 mt-2">
                 <button onClick={clearAllCategories} className="text-xs text-blue-400 hover:text-blue-300">
-                  Clear All
+                  limpiar filtros
                 </button>
                 <span className="text-xs text-gray-500">•</span>
-                <span className="text-xs text-gray-400">{selectedCategories.length} selected</span>
+                <span className="text-xs text-gray-400">{selectedCategories.length} seleccionados</span>
               </div>
             </div>
             <div className="flex-1 overflow-y-auto">
@@ -228,9 +247,8 @@ export function ExpenseList() {
                   <button
                     key={category}
                     onClick={() => toggleCategory(category)}
-                    className={`w-full text-left px-4 py-3 hover:bg-gray-700 transition-colors border-b border-gray-700/50 last:border-b-0 flex items-center justify-between ${
-                      selectedCategories.includes(category) ? "bg-blue-600/20 text-blue-300" : "text-white"
-                    }`}
+                    className={`w-full text-left px-4 py-3 hover:bg-gray-700 transition-colors border-b border-gray-700/50 last:border-b-0 flex items-center justify-between ${selectedCategories.includes(category) ? "bg-blue-600/20 text-blue-300" : "text-white"
+                      }`}
                   >
                     <span>{category}</span>
                     {selectedCategories.includes(category) && <Check className="w-4 h-4 text-blue-400" />}
