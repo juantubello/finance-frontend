@@ -1,7 +1,7 @@
 "use client"
 
 import { expensesData, incomeData, cardsData, categorySpendingData } from "./data"
-import type { ExpensesData, IncomeData, CardData, CategorySpending } from "./types"
+import type { ExpensesData, IncomeData, CardData, CategorySpending, ExpenseItem, IncomeItem } from "./types"
 
 const USE_API = process.env.NEXT_PUBLIC_USE_API === "1"
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8080"
@@ -46,6 +46,22 @@ export interface BalanceResponse {
   formatted_monthly_cards_usd: string
 }
 
+
+
+export interface SyncExpensesResponse {
+  DeletedRows: number
+  DeletedRowsDetail: ExpenseItem[]
+  InsertedRows: number
+  InsertedRowsDetail: ExpenseItem[]
+}
+
+export interface SyncIncomeResponse {
+  DeletedRows: number
+  DeletedRowsDetail: IncomeItem[]
+  InsertedRows: number
+  InsertedRowsDetail: IncomeItem[]
+}
+
 // Generate dynamic colors for categories
 const generateCategoryColor = (index: number): string => {
   const colors = [
@@ -70,32 +86,6 @@ const formatDateParams = (year: number, month: number) => {
     month: month.toString().padStart(2, "0"),
   }
 }
-
-// API Functions
-// export async function getExpensesSummary(year: number, month: number): Promise<CategorySpending[]> {
-//   if (!USE_API) {
-//     return categorySpendingData
-//   }
-
-//   try {
-//     const { year: yearStr, month: monthStr } = formatDateParams(year, month)
-//     const response = await fetch(`${API_BASE_URL}/expenses/summary?year=${yearStr}&month=${monthStr}`)
-
-//     if (!response.ok) throw new Error("Failed to fetch expenses summary")
-
-//     const data: ExpensesSummaryResponse = await response.json()
-
-//     return data.ExpensesSummary.types_summary.map((item, index) => ({
-//       category: item.type,
-//       amount: item.total,
-//       formatted_amount: item.formatted_total,
-//       color: generateCategoryColor(index),
-//     }))
-//   } catch (error) {
-//     console.error("Error fetching expenses summary:", error)
-//      return categorySpendingData // Fallback to hardcoded data
-//   }
-// }
 
 export async function getExpensesSummary(year: number, month: number) {
   if (!USE_API) {
@@ -195,6 +185,54 @@ export async function getIncomes(year: number, month: number): Promise<IncomeDat
   } catch (error) {
     console.error("Error fetching incomes:", error)
     return incomeData // Fallback to hardcoded data
+  }
+}
+
+export async function syncExpenses(historical: boolean): Promise<SyncExpensesResponse> {
+  try {
+    
+    let response: Response
+
+    if (historical) {
+      response = await fetch(`${API_BASE_URL}/expenses/sync/historical`)
+    } else {
+      response = await fetch(`${API_BASE_URL}/expenses/sync/month`)
+    }
+
+    if (!response.ok) {
+      throw new Error(`Error ${response.status} en servidor`)
+    }
+
+    const data: SyncExpensesResponse = await response.json()
+    return data
+
+  } catch (error) {
+    console.error("Error sincronizando expensas:", error)
+    throw error
+  }
+}
+
+export async function syncIncomes(historical: boolean): Promise<SyncIncomeResponse> {
+  try {
+
+    let response: Response
+
+    if (historical) {
+      response = await fetch(`${API_BASE_URL}/incomes/sync/historical`)
+    } else {
+      response = await fetch(`${API_BASE_URL}/incomes/sync/month`)
+    }
+
+    if (!response.ok) {
+      throw new Error(`Error ${response.status} en servidor`)
+    }
+
+    const data: SyncIncomeResponse = await response.json()
+    return data
+    
+  } catch (error) {
+    console.error("Error sincronizando expensas:", error)
+    throw error
   }
 }
 
