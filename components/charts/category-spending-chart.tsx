@@ -36,7 +36,7 @@ export function CategorySpendingChart() {
   if (isLoading || !summaryData) {
     return (
       <div className="p-6">
-        <h3 className="text-lg font-semibold mb-4 text-white">Spending by Category</h3>
+        <h3 className="text-lg font-semibold mb-4 text-white">Gastos por categoria</h3>
         <div className="bg-gray-800/80 backdrop-blur-sm border border-gray-700/50 rounded-2xl p-6 mb-6 shadow-xl">
           <div className="flex items-center justify-center h-64">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-400"></div>
