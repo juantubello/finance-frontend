@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"
 import { TrendingUp, TrendingDown, CreditCard, Wallet, DollarSign, Receipt } from "lucide-react"
 import { getBalance } from "@/lib/api"
 import { useDateFilter } from "@/lib/context/date-filter-context"
+import type { IncomeData, CategorySpending } from "@/lib/types"
 
 interface BalanceData {
   balance: number
@@ -12,12 +13,28 @@ interface BalanceData {
   formatted_expenses: string
   total_incomes: number
   formatted_incomes: string
+  formatted_monthly_income: string
+  formatted_monthly_expenses: string
+  formatted_monthly_cards_ars: string
+  formatted_monthly_cards_usd: string
 }
 
 export function FinancialSummary() {
   const { dateFilter } = useDateFilter()
+  const [incomeData, setIncomeData] = useState<IncomeData>({
+    income_total: 0,
+    income_total_formatted: "$0,00",
+    incomes_details: [],
+  })
   const [balanceData, setBalanceData] = useState<BalanceData | null>(null)
   const [isLoading, setIsLoading] = useState(true)
+
+  const [expensesData, setSummaryData] = useState<{
+    total: number
+    formatted_total: string
+    period: string
+    types_summary: CategorySpending[]
+  } | null>(null)
 
   useEffect(() => {
     const fetchData = async () => {
@@ -33,11 +50,13 @@ export function FinancialSummary() {
           formatted_expenses: data.formatted_expenses,
           total_incomes: data.total_incomes,
           formatted_incomes: data.formatted_incomes,
+          formatted_monthly_income: data.formatted_monthly_income,
+          formatted_monthly_expenses: data.formatted_monthly_expenses,
+          formatted_monthly_cards_ars: data.formatted_monthly_cards_ars,
+          formatted_monthly_cards_usd: data.formatted_monthly_cards_usd
         }
-
-
-
         setBalanceData(transformed)
+
       } catch (error) {
         console.error("Error loading balance:", error)
       } finally {
@@ -112,7 +131,7 @@ export function FinancialSummary() {
               <TrendingUp className="w-5 h-5 text-green-400" />
               <span className="text-xs text-green-300 font-medium">INGRESO MENSUAL</span>
             </div>
-            <div className="text-xl font-bold text-white mb-1">{balanceData.formatted_incomes}</div>
+            <div className="text-xl font-bold text-white mb-1">{balanceData.formatted_monthly_income}</div>
           </div>
 
           {/* Total Expenses */}
@@ -121,7 +140,7 @@ export function FinancialSummary() {
               <Receipt className="w-5 h-5 text-red-400" />
               <span className="text-xs text-red-300 font-medium">GASTOS EFECTIVO/DEBITO</span>
             </div>
-            <div className="text-xl font-bold text-white mb-1">{balanceData.formatted_expenses}</div>
+            <div className="text-xl font-bold text-white mb-1">{balanceData.formatted_monthly_expenses}</div>
           </div>
         </div>
 
@@ -136,13 +155,13 @@ export function FinancialSummary() {
             <div>
               <div className="text-sm text-gray-400 mb-1">ARS Total</div>
               <div className="text-2xl font-bold text-white">
-                {balanceData.formatted_expenses}
+                {balanceData.formatted_monthly_cards_ars}
               </div>
             </div>
             <div>
               <div className="text-sm text-gray-400 mb-1">USD Total</div>
               <div className="text-2xl font-bold text-white">
-                $500.00
+                  {balanceData.formatted_monthly_cards_usd}
               </div>
             </div>
           </div>

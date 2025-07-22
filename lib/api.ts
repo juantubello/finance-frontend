@@ -34,12 +34,16 @@ export interface RecentExpensesResponse {
 }
 
 export interface BalanceResponse {
-    balance: number
-    formatted_balance: string
-    total_expenses: number
-    formatted_expenses: string
-    total_incomes: number
-    formatted_incomes: string
+  balance: number
+  formatted_balance: string
+  total_expenses: number
+  formatted_expenses: string
+  total_incomes: number
+  formatted_incomes: string
+  formatted_monthly_income: string
+  formatted_monthly_expenses: string
+  formatted_monthly_cards_ars: string
+  formatted_monthly_cards_usd: string
 }
 
 // Generate dynamic colors for categories
@@ -212,12 +216,16 @@ export async function getBalance(year?: number, month?: number): Promise<Balance
   } catch (error) {
     console.error("Error fetching balance:", error)
     return {
-        balance: 0,
-        formatted_balance: "$0",
-        total_expenses: 0,
-        formatted_expenses: "$0",
-        total_incomes: 0,
-        formatted_incomes: "$0",
+      balance: 0,
+      formatted_balance: "$0",
+      total_expenses: 0,
+      formatted_expenses: "$0",
+      total_incomes: 0,
+      formatted_incomes: "$0",
+      formatted_monthly_income: "$0",
+      formatted_monthly_expenses: "$0",
+      formatted_monthly_cards_ars: "$0",
+      formatted_monthly_cards_usd: "$0"
     }
   }
 }
