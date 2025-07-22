@@ -1,6 +1,8 @@
+"use client" // 👈 Esto lo convierte en un Client Component
+
 import { notFound } from "next/navigation"
-import { cardsData } from "@/lib/data"
 import { CardDetailView } from "@/components/cards/card-detail-view"
+import { useCardStore } from "@/globalstores/cardStore"
 
 interface CardDetailPageProps {
   params: {
@@ -9,7 +11,8 @@ interface CardDetailPageProps {
 }
 
 export default function CardDetailPage({ params }: CardDetailPageProps) {
-  const card = cardsData.find((c) => c.document_number === params.cardId)
+  const cards = useCardStore((state) => state.cardsData)
+  const card = cards.find((c) => c.document_number === params.cardId)
 
   if (!card) {
     notFound()

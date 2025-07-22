@@ -7,6 +7,8 @@ import { CardMini } from "./card-mini"
 import { useRouter } from "next/navigation"
 import { TrendingUp, TrendingDown } from "lucide-react"
 import type { CardData } from "@/lib/types"
+import { useCardStore } from "@/globalstores/cardStore"
+
 
 export function CardsOverview() {
   const router = useRouter()
@@ -20,6 +22,7 @@ export function CardsOverview() {
       try {
         const data = await getCardsExpenses(dateFilter.year, dateFilter.month)
         setCardsData(data)
+        useCardStore.getState().setCardsData(data)
       } catch (error) {
         console.error("Error loading cards data:", error)
       } finally {
