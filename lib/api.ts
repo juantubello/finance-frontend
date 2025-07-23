@@ -49,17 +49,17 @@ export interface BalanceResponse {
 
 
 export interface SyncExpensesResponse {
-  DeletedRows: number
-  DeletedRowsDetail: ExpenseItem[]
-  InsertedRows: number
-  InsertedRowsDetail: ExpenseItem[]
+  rows_deleted: number
+  deleted_rows_detail: ExpenseItem[]
+  inserted_rows: number
+  inserted_rows_details: ExpenseItem[]
 }
 
 export interface SyncIncomeResponse {
-  DeletedRows: number
-  DeletedRowsDetail: IncomeItem[]
-  InsertedRows: number
-  InsertedRowsDetail: IncomeItem[]
+  rows_deleted: number
+  deleted_rows_detail: IncomeItem[]
+  inserted_rows: number
+  inserted_rows_details: IncomeItem[]
 }
 
 // Generate dynamic colors for categories

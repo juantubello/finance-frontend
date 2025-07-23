@@ -13,11 +13,31 @@ import {
   AlertCircle,
 } from "lucide-react"
 
+import type { ExpenseItem, IncomeItem } from "@/lib/types"
+
+import { syncExpenses, syncIncomes } from "@/lib/api"
+import { expensesData } from "@/lib/data"
+
 interface SyncNotification {
   id: string
   type: "success" | "error"
   message: string
 }
+
+export interface SyncExpensesResponse {
+  rows_deleted: number
+  inserted_rows_details: ExpenseItem[]
+  inserted_rows: number
+  deleted_rows_detail: ExpenseItem[]
+}
+
+export interface SyncIncomeResponse {
+  rows_deleted: number
+  inserted_rows_details: IncomeItem[]
+  inserted_rows: number
+  deleted_rows_detail: IncomeItem[]
+}
+
 
 const syncButtons = [
   {
@@ -76,7 +96,6 @@ export function SyncSection() {
   const addNotification = (type: "success" | "error", message: string) => {
     const id = Date.now().toString()
     const notification = { id, type, message }
-
     setNotifications((prev) => [...prev, notification])
 
     // Auto remove after 3 seconds
@@ -90,20 +109,67 @@ export function SyncSection() {
   }
 
   const performSync = async (syncType: string) => {
+
+    let syncExpensesResponse: SyncExpensesResponse | null = null
+
     setIsLoading(syncType)
+    try {
 
-    // Simulate API call with random success/failure
-    const success = Math.random() > 0.3 // 70% success rate
+      let success = false
+      let syncName = ""
 
-    await new Promise((resolve) => setTimeout(resolve, 2000)) // 2 second delay
+      switch (syncType) {
+        case "monthly-expenses":
+          syncExpensesResponse = await syncExpenses(false)
+          success = true
+          syncName = "monthly expenses"
+          break
+        case "historical-expenses":
+          syncExpensesResponse = await syncExpenses(true)
+          success = true
+          syncName = "historical expenses"
+          break
+        case "monthly-income":
+          await syncIncomes(false)
+          success = true
+          syncName = "monthly income"
+          break
+        case "historical-income":
+          await syncIncomes(true)
+          success = true
+          syncName = "historical income"
+          break
+        case "sync-resumes":
+          // Implement resume sync logic here
+          success = true
+          syncName = "resumes"
+          break
+        default:
+          throw new Error("Unknown sync type")
+      }
 
-    const button = syncButtons.find((b) => b.id === syncType)
-    const syncName = button?.title.replace("Sync ", "") || "data"
+      if (success) {
+        let deleted, added
+        if (syncExpensesResponse && syncExpensesResponse?.rows_deleted > 0) {
+          deleted = syncExpensesResponse.rows_deleted
+        }
+        if (syncExpensesResponse && syncExpensesResponse?.inserted_rows > 0) {
+          added = syncExpensesResponse.inserted_rows
+        }
+        if (deleted && added) {
+          addNotification("success", `${added} expenses inserted, ${deleted} expenses deleted`)
+        } else if (added) {
+          addNotification("success", `${added} expenses inserted`)
+        } else if (deleted) {
+          addNotification("success", `${deleted} expenses deleted`)
+        }else{
+          addNotification("success", `no existen nuevas expensas para sincronizar`)
+        }
+      }
 
-    if (success) {
-      addNotification("success", `${syncName} synced successfully`)
-    } else {
-      addNotification("error", `Failed to sync ${syncName}`)
+    }
+    catch (err) {
+      addNotification("error", `Failed to sync ${err}`)
     }
 
     setIsLoading(null)
@@ -151,9 +217,8 @@ export function SyncSection() {
                 key={button.id}
                 onClick={() => handleSync(button.id)}
                 disabled={isCurrentlyLoading || isLoading !== null}
-                className={`w-full p-4 rounded-2xl border backdrop-blur-sm transition-all duration-200 hover:shadow-lg active:scale-[0.98] ${button.color} ${
-                  isCurrentlyLoading || isLoading !== null ? "opacity-50 cursor-not-allowed" : ""
-                }`}
+                className={`w-full p-4 rounded-2xl border backdrop-blur-sm transition-all duration-200 hover:shadow-lg active:scale-[0.98] ${button.color} ${isCurrentlyLoading || isLoading !== null ? "opacity-50 cursor-not-allowed" : ""
+                  }`}
               >
                 <div className="flex items-center gap-3">
                   <div
@@ -176,13 +241,6 @@ export function SyncSection() {
           })}
         </div>
 
-        <div className="mt-4 p-3 bg-blue-600/20 rounded-2xl border border-blue-500/20 backdrop-blur-sm">
-          <div className="flex items-center gap-2 text-blue-300">
-            <RefreshCw className="w-4 h-4" />
-            <span className="text-sm font-medium">Auto-sync enabled</span>
-          </div>
-          <p className="text-xs text-blue-200 mt-1">Data syncs automatically every 24 hours</p>
-        </div>
       </div>
 
       {/* Confirmation Modal */}
@@ -226,11 +284,10 @@ export function SyncSection() {
         {notifications.map((notification) => (
           <div
             key={notification.id}
-            className={`flex items-center gap-3 p-3 rounded-lg shadow-lg backdrop-blur-sm border animate-in slide-in-from-bottom-2 ${
-              notification.type === "success"
-                ? "bg-green-600/90 border-green-500/50 text-white"
-                : "bg-red-600/90 border-red-500/50 text-white"
-            }`}
+            className={`flex items-center gap-3 p-3 rounded-lg shadow-lg backdrop-blur-sm border animate-in slide-in-from-bottom-2 ${notification.type === "success"
+              ? "bg-green-600/90 border-green-500/50 text-white"
+              : "bg-red-600/90 border-red-500/50 text-white"
+              }`}
           >
             {notification.type === "success" ? (
               <CheckCircle className="w-5 h-5 text-green-200" />
