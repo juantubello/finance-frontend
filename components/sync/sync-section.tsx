@@ -11,16 +11,16 @@ import {
   X,
   CheckCircle,
   AlertCircle,
+  Info
 } from "lucide-react"
 
 import type { ExpenseItem, IncomeItem } from "@/lib/types"
 
 import { syncExpenses, syncIncomes } from "@/lib/api"
-import { expensesData } from "@/lib/data"
 
 interface SyncNotification {
   id: string
-  type: "success" | "error"
+  type: "success" | "error" | "info"
   message: string
 }
 
@@ -42,8 +42,8 @@ export interface SyncIncomeResponse {
 const syncButtons = [
   {
     id: "monthly-expenses",
-    title: "Sync monthly expenses",
-    description: "Current month transactions",
+    title: "Sincronizar gastos mensuales",
+    description: "Gastos del mes actual",
     icon: Calendar,
     color: "bg-red-600/20 border-red-500/20 text-red-300",
     iconColor: "text-red-400",
@@ -51,8 +51,8 @@ const syncButtons = [
   },
   {
     id: "historical-expenses",
-    title: "Sync historical expenses",
-    description: "All past transactions",
+    title: "Sincronizar gastos historicos",
+    description: "Historico de gastos",
     icon: History,
     color: "bg-orange-600/20 border-orange-500/20 text-orange-300",
     iconColor: "text-orange-400",
@@ -60,8 +60,8 @@ const syncButtons = [
   },
   {
     id: "monthly-income",
-    title: "Sync monthly income",
-    description: "Current month earnings",
+    title: "Sincronizar ingresos mensuales",
+    description: "Ingresos mensuales",
     icon: TrendingUp,
     color: "bg-green-600/20 border-green-500/20 text-green-300",
     iconColor: "text-green-400",
@@ -69,8 +69,8 @@ const syncButtons = [
   },
   {
     id: "historical-income",
-    title: "Sync historical income",
-    description: "All past earnings",
+    title: "Sincronizar ingresos historicos",
+    description: "Ingresos historicos",
     icon: DollarSign,
     color: "bg-blue-600/20 border-blue-500/20 text-blue-300",
     iconColor: "text-blue-400",
@@ -78,8 +78,8 @@ const syncButtons = [
   },
   {
     id: "sync-resumes",
-    title: "Sync resumes",
-    description: "Document synchronization",
+    title: "Sincronizar resumes de tarjeta",
+    description: "Resumenes de cuenta",
     icon: FileText,
     color: "bg-purple-600/20 border-purple-500/20 text-purple-300",
     iconColor: "text-purple-400",
@@ -93,7 +93,7 @@ export function SyncSection() {
   const [isLoading, setIsLoading] = useState<string | null>(null)
   const [notifications, setNotifications] = useState<SyncNotification[]>([])
 
-  const addNotification = (type: "success" | "error", message: string) => {
+  const addNotification = (type: "success" | "error" | "info", message: string) => {
     const id = Date.now().toString()
     const notification = { id, type, message }
     setNotifications((prev) => [...prev, notification])
@@ -122,22 +122,22 @@ export function SyncSection() {
         case "monthly-expenses":
           syncExpensesResponse = await syncExpenses(false)
           success = true
-          syncName = "monthly expenses"
+          syncName = "gastos"
           break
         case "historical-expenses":
           syncExpensesResponse = await syncExpenses(true)
           success = true
-          syncName = "historical expenses"
+          syncName = "gastos historicos"
           break
         case "monthly-income":
           await syncIncomes(false)
           success = true
-          syncName = "monthly income"
+          syncName = "ingresos"
           break
         case "historical-income":
           await syncIncomes(true)
           success = true
-          syncName = "historical income"
+          syncName = "ingresos historicos"
           break
         case "sync-resumes":
           // Implement resume sync logic here
@@ -145,7 +145,7 @@ export function SyncSection() {
           syncName = "resumes"
           break
         default:
-          throw new Error("Unknown sync type")
+          throw new Error("Tipo de sincronizacion desconocido")
       }
 
       if (success) {
@@ -157,13 +157,13 @@ export function SyncSection() {
           added = syncExpensesResponse.inserted_rows
         }
         if (deleted && added) {
-          addNotification("success", `${added} expenses inserted, ${deleted} expenses deleted`)
+          addNotification("success", `${added} ${syncName} sincronizados y ${deleted} eliminados`)
         } else if (added) {
-          addNotification("success", `${added} expenses inserted`)
+          addNotification("success", `${added} ${syncName} sincronizados`)
         } else if (deleted) {
-          addNotification("success", `${deleted} expenses deleted`)
+          addNotification("success", `${deleted} ${syncName} eliminados`)
         }else{
-          addNotification("success", `no existen nuevas expensas para sincronizar`)
+          addNotification("info", `no existen nuevos ${syncName} para sincronizar`)
         }
       }
 
@@ -204,7 +204,7 @@ export function SyncSection() {
       <div className="px-6 pb-6">
         <div className="flex items-center gap-2 mb-4">
           <RefreshCw className="w-5 h-5 text-blue-400" />
-          <h3 className="text-lg font-semibold text-white">Sync Data</h3>
+          <h3 className="text-lg font-semibold text-white">Sincronizar datos</h3>
         </div>
 
         <div className="space-y-3">
@@ -252,12 +252,11 @@ export function SyncSection() {
                 <div className="w-10 h-10 bg-orange-600/20 rounded-lg flex items-center justify-center">
                   <History className="w-5 h-5 text-orange-400" />
                 </div>
-                <h3 className="text-lg font-semibold text-white">Confirm Historical Sync</h3>
+                <h3 className="text-lg font-semibold text-white">Confirmación de sincronización</h3>
               </div>
 
               <p className="text-gray-300 mb-6">
-                Are you sure you want to sync historical data? This may take several minutes and will download all past
-                records.
+                Puede tardar mucho!! 😅😅
               </p>
 
               <div className="flex gap-3">
@@ -265,13 +264,13 @@ export function SyncSection() {
                   onClick={cancelConfirmation}
                   className="flex-1 px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-colors"
                 >
-                  Cancel
+                  Cancelar
                 </button>
                 <button
                   onClick={confirmHistoricalSync}
                   className="flex-1 px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-lg transition-colors"
                 >
-                  Confirm
+                  Aceptar
                 </button>
               </div>
             </div>
@@ -280,27 +279,53 @@ export function SyncSection() {
       )}
 
       {/* Notifications */}
-      <div className="fixed bottom-24 left-4 right-4 z-40 space-y-2 max-w-md mx-auto">
-        {notifications.map((notification) => (
-          <div
-            key={notification.id}
-            className={`flex items-center gap-3 p-3 rounded-lg shadow-lg backdrop-blur-sm border animate-in slide-in-from-bottom-2 ${notification.type === "success"
-              ? "bg-green-600/90 border-green-500/50 text-white"
-              : "bg-red-600/90 border-red-500/50 text-white"
-              }`}
-          >
-            {notification.type === "success" ? (
-              <CheckCircle className="w-5 h-5 text-green-200" />
-            ) : (
-              <AlertCircle className="w-5 h-5 text-red-200" />
-            )}
-            <span className="flex-1 text-sm font-medium">{notification.message}</span>
-            <button onClick={() => removeNotification(notification.id)} className="text-white/70 hover:text-white">
-              <X className="w-4 h-4" />
-            </button>
-          </div>
-        ))}
+<div className="fixed bottom-24 left-4 right-4 z-40 space-y-2 max-w-md mx-auto">
+  {notifications.map((notification) => {
+    let bgColor = ""
+    let borderColor = ""
+    let textColor = "text-white"
+    let Icon = AlertCircle
+    let iconColor = ""
+
+    switch (notification.type) {
+      case "success":
+        bgColor = "bg-green-600/90"
+        borderColor = "border-green-500/50"
+        iconColor = "text-green-200"
+        Icon = CheckCircle
+        break
+      case "info":
+        bgColor = "bg-blue-600/90"
+        borderColor = "border-blue-500/50"
+        iconColor = "text-blue-200"
+        Icon = Info
+        break
+      default:
+        bgColor = "bg-red-600/90"
+        borderColor = "border-red-500/50"
+        iconColor = "text-red-200"
+        Icon = AlertCircle
+        break
+    }
+
+    return (
+      <div
+        key={notification.id}
+        className={`flex items-center gap-3 p-3 rounded-lg shadow-lg backdrop-blur-sm border animate-in slide-in-from-bottom-2 ${bgColor} ${borderColor} ${textColor}`}
+      >
+        <Icon className={`w-5 h-5 ${iconColor}`} />
+        <span className="flex-1 text-sm font-medium">{notification.message}</span>
+        <button
+          onClick={() => removeNotification(notification.id)}
+          className="text-white/70 hover:text-white"
+        >
+          <X className="w-4 h-4" />
+        </button>
       </div>
+    )
+  })}
+</div>
+
     </>
   )
 }
