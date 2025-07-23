@@ -45,7 +45,8 @@ export function ExpenseList() {
 
   const formatDate = (dateTime: string) => {
     const [date, time] = dateTime.split(" ")
-    return date
+    let formmated = "📅 " + date + " 🕰️ " + time
+    return formmated
   }
 
   const getTypeColor = (type: string) => {
@@ -277,22 +278,21 @@ export function ExpenseList() {
                 key={expense.id}
                 className="bg-gray-800/80 backdrop-blur-sm border border-gray-700/50 rounded-2xl p-4 shadow-xl"
               >
-                <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center justify-between mb-1">
                   <div className="flex-1">
+                    <p className="text-xs text-gray-500 mb-2">{formatDate(expense.date_time)}</p>
                     <h4 className="font-medium text-white capitalize">{expense.description}</h4>
-                    <p className="text-sm text-gray-400">{formatDate(expense.date_time)}</p>
                   </div>
+
                   <div className="text-right">
                     <div className="font-semibold text-red-400">-{expense.formatted_amount}</div>
+                    <div className={`mt-1 px-2 py-1 rounded-full text-xs font-medium border inline-block ${getTypeColor(expense.type)}`}>
+                      {expense.type}
+                    </div>
                   </div>
                 </div>
-                <div className="flex items-center justify-between">
-                  <span className={`px-2 py-1 rounded-full text-xs font-medium border ${getTypeColor(expense.type)}`}>
-                    {expense.type}
-                  </span>
-                  <span className="text-xs text-gray-500">ID: {expense.id}</span>
-                </div>
               </div>
+
             ))
           )}
         </div>

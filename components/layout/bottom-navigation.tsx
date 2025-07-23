@@ -4,12 +4,12 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 
 const navItems = [
-  { href: "/", icon: Home, label: "Home" },
-  { href: "/expenses", icon: CreditCard, label: "Expenses" },
-  { href: "/income", icon: TrendingUp, label: "Income" },
-  { href: "/analytics", icon: PieChart, label: "Analytics" },
-  { href: "/cards", icon: CreditCard, label: "Cards" },
-  { href: "/sync", icon: RefreshCw, label: "Sync" },
+  { href: "/", icon: Home, label: "Inicio" },
+  { href: "/expenses", icon: CreditCard, label: "Gastos" },
+  { href: "/income", icon: TrendingUp, label: "Ingresos" },
+  { href: "/cards", icon: CreditCard, label: "Tarjetas" },
+    { href: "/analytics", icon: PieChart, label: "Analiticas" },
+  { href: "/sync", icon: RefreshCw, label: "Sincronizacion" },
 ]
 
 export function BottomNavigation() {

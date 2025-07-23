@@ -61,7 +61,7 @@ export function RecentExpensesTable() {
   if (isLoading) {
     return (
       <div className="px-6 pb-6">
-        <h3 className="text-lg font-semibold mb-4 text-white">Recent Expenses</h3>
+        <h3 className="text-lg font-semibold mb-4 text-white">Gastos recientes</h3>
         <div className="bg-gray-800/80 backdrop-blur-sm border border-gray-700/50 rounded-2xl p-6">
           <div className="flex items-center justify-center h-32">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-400"></div>
@@ -73,7 +73,7 @@ export function RecentExpensesTable() {
 
   return (
     <div className="px-6 pb-6">
-      <h3 className="text-lg font-semibold mb-4 text-white">Recent Expenses</h3>
+      <h3 className="text-lg font-semibold mb-4 text-white">Gastos recientes</h3>
 
       <div className="bg-gray-800/80 backdrop-blur-sm border border-gray-700/50 rounded-2xl overflow-hidden shadow-xl">
         {recentExpenses.length === 0 ? (
