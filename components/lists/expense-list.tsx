@@ -292,7 +292,6 @@ export function ExpenseList() {
                   </div>
                 </div>
               </div>
-
             ))
           )}
         </div>
