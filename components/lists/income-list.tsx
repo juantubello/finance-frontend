@@ -32,7 +32,8 @@ export function IncomeList() {
 
   const formatDate = (dateTime: string) => {
     const [date, time] = dateTime.split(" ")
-    return date
+    let formmated = "📅 " + date + " 🕰️ " + time
+    return formmated
   }
 
   const getTypeColor = (type: string) => {
@@ -69,15 +70,15 @@ export function IncomeList() {
 
       <div className="space-y-3">
         {incomeData.incomes_details.map((income) => (
-          <div
-            key={income.id}
-            className="bg-gray-800/80 backdrop-blur-sm border border-gray-700/50 rounded-2xl p-4 shadow-xl"
-          >
-            <div className="flex items-center justify-between mb-2">
-              <div className="flex-1">
-                <h4 className="font-medium text-white capitalize">{income.description}</h4>
-                <p className="text-sm text-gray-400">{formatDate(income.date_time)}</p>
-              </div>
+              <div
+                key={income.id}
+                className="bg-gray-800/80 backdrop-blur-sm border border-gray-700/50 rounded-2xl p-4 shadow-xl"
+              >
+                <div className="flex items-center justify-between mb-1">
+                  <div className="flex-1">
+                    <p className="text-xs text-gray-500 mb-2">{formatDate(income.date_time)}</p>
+                    <h4 className="font-medium text-white capitalize">{income.description}</h4>
+                  </div>
               <div className="text-right">
                 <div className="font-semibold text-green-400">+{income.formatted_amount}</div>
               </div>
@@ -86,7 +87,6 @@ export function IncomeList() {
               <span className={`px-2 py-1 rounded-full text-xs font-medium border ${getTypeColor(income.type)}`}>
                 {income.type}
               </span>
-              <span className="text-xs text-gray-500">ID: {income.id}</span>
             </div>
           </div>
         ))}
