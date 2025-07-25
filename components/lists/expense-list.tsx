@@ -50,23 +50,32 @@ export function ExpenseList() {
   }
 
   const getTypeColor = (type: string) => {
-    const colors: Record<string, string> = {
-      "Alquiler y expensas": "bg-blue-600/20 text-blue-300 border-blue-500/20",
-      "Boludeces innecesarias": "bg-red-600/20 text-red-300 border-red-500/20",
-      "Boludeces necesarias": "bg-green-600/20 text-green-300 border-green-500/20",
-      Regalos: "bg-purple-600/20 text-purple-300 border-purple-500/20",
-      "Traslado (Uber - Taxi)": "bg-yellow-600/20 text-yellow-300 border-yellow-500/20",
-      Delivery: "bg-orange-600/20 text-orange-300 border-orange-500/20",
-      "Cafe (Amelia/Posta etc)": "bg-purple-600/20 text-purple-300 border-purple-500/20",
-      "Comida y vivienda": "bg-green-600/20 text-green-300 border-green-500/20",
-      Otro: "bg-blue-600/20 text-blue-300 border-blue-500/20",
-      "Comida fuera de casa": "bg-red-600/20 text-red-300 border-red-500/20",
+    const categoryColors: Record<string, string> = {
+      "Alquiler y expensas": "bg-[#194D12] text-white-800 border-[#194D12]/100",
+      "Supermercado": "bg-[#5C8BD6] text-white-800 border-[#5C8BD6]/100",
+      "Servicios": "bg-[#301FED] text-white-800 border-[#301FED]/100",
+      "Delivery": "bg-[#E0791B] text-white-800 border-[#E0791B]/100",
+      "Boludeces necesarias": "bg-[#0DA5B5] text-white-800 border-[#0DA5B5]/100",
+      "Boludeces innecesarias": "bg-[#D61C1C] text-white-800 border-[#D61C1C]/100",
+      "Auto": "bg-[#8D9491] text-white-800 border-[#8D9491]/100",
+      "Gatas": "bg-[#D081D4] text-white-800 border-[#D081D4]/100",
+      "Comida fuera de casa": "bg-[#6E3440] text-white-800 border-[#6E3440]/100",
+      "Traslado (Uber - Taxi)": "bg-[#DEB61B] text-white-800 border-[#DEB61B]/100",
+      "Regalos": "bg-[#6B8A82] text-white-800 border-[#6B8A82]/100",
+      "Cafe's": "bg-[#7D583E] text-white-800 border-[#7D583E]/100",
+      "Pago tarjetas": "bg-[#403739] text-white-800 border-[#403739]/100",
+      "Medicamentos": "bg-[#82B88C] text-white-800 border-[#82B88C]/100",
+      "Deportes": "bg-[#50346B] text-white-800 border-[#50346B]/100",
+      "Monotributo": "bg-[#242B57] text-white-800 border-[#242B57]/100",
+      "Otro": "bg-[#0EC78D] text-white-800 border-[#0EC78D]/100",
     }
-    return colors[type] || "bg-gray-600/20 text-gray-300 border-gray-500/20"
+
+    return categoryColors[type] || "bg-gray-600/20 text-gray-300 border-gray-500/30"
   }
 
+
   const toggleCategory = (category: string) => {
-    if (category === "All Categories") {
+    if (category === "Todas las categorias") {
       setSelectedCategories([])
     } else {
       setSelectedCategories((prev) =>
@@ -105,7 +114,7 @@ export function ExpenseList() {
   }, [filteredExpenses])
 
   const getSelectedCategoriesText = () => {
-    if (selectedCategories.length === 0) return "All Categories"
+    if (selectedCategories.length === 0) return "Todas las categorias"
     if (selectedCategories.length === 1) return selectedCategories[0]
     return `${selectedCategories.length} categories selected`
   }
@@ -135,7 +144,7 @@ export function ExpenseList() {
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
             <Filter className="w-5 h-5 text-blue-400" />
-            <h3 className="font-semibold text-white">Filters</h3>
+            <h3 className="font-semibold text-white">Filtros</h3>
           </div>
           <button
             onClick={() => setShowFilters(!showFilters)}
@@ -152,7 +161,7 @@ export function ExpenseList() {
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
               <input
                 type="text"
-                placeholder="Search by description..."
+                placeholder="Buscar por descripción"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full pl-10 pr-4 py-2 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-white placeholder-gray-400"
@@ -243,7 +252,7 @@ export function ExpenseList() {
             </div>
             <div className="flex-1 overflow-y-auto">
               {getExpenseCategories()
-                .filter((cat) => cat !== "All Categories")
+                .filter((cat) => cat !== "Todas las categorias")
                 .map((category) => (
                   <button
                     key={category}
@@ -262,7 +271,7 @@ export function ExpenseList() {
 
       {/* Expenses List */}
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-semibold text-white">Expense Details</h3>
+        <h3 className="text-lg font-semibold text-white">Detalle de gastos</h3>
       </div>
 
       <div className="max-h-[600px] overflow-y-auto pr-2" style={{ scrollbarGutter: "stable" }}>
@@ -270,7 +279,7 @@ export function ExpenseList() {
           {filteredExpenses.length === 0 ? (
             <div className="bg-gray-800/80 backdrop-blur-sm border border-gray-700/50 rounded-2xl p-8 text-center text-gray-400">
               <Search className="w-8 h-8 mx-auto mb-2 opacity-50" />
-              <p>No expenses found matching your filters.</p>
+              <p>No se encontraron gastos para los filtros seleccionados.</p>
             </div>
           ) : (
             filteredExpenses.map((expense) => (
@@ -286,7 +295,7 @@ export function ExpenseList() {
 
                   <div className="text-right">
                     <div className="font-semibold text-red-400">-{expense.formatted_amount}</div>
-                    <div className={`mt-1 px-2 py-1 rounded-full text-xs font-medium border inline-block ${getTypeColor(expense.type)}`}>
+                   <div className={`mt-1 px-1 py-[2px] rounded text-[10px] leading-tight font-medium border inline-block ${getTypeColor(expense.type)}`}>
                       {expense.type}
                     </div>
                   </div>
