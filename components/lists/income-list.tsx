@@ -58,14 +58,14 @@ export function IncomeList() {
     <div className="px-6 pb-6">
       {/* Total Income Summary */}
       <div className="bg-gradient-to-br from-green-600/20 to-green-800/20 backdrop-blur-sm border border-green-500/20 rounded-2xl p-4 mb-6">
-        <h3 className="text-sm font-medium text-green-300 mb-1">Total Income</h3>
+        <h3 className="text-sm font-medium text-green-300 mb-1">Ingresos</h3>
         <div className="text-2xl font-bold text-white">{incomeData.income_total_formatted}</div>
-        <p className="text-sm text-green-200 mt-1">{incomeData.incomes_details.length} income sources</p>
+        <p className="text-sm text-green-200 mt-1">{incomeData.incomes_details.length} fuentes de ingresos</p>
       </div>
 
       {/* Income Details */}
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-semibold text-white">Income Details</h3>
+        <h3 className="text-lg font-semibold text-white">Detalle de ingresos</h3>
       </div>
 
       <div className="space-y-3">
