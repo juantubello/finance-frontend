@@ -83,7 +83,7 @@ export function CardMini({ card, onClick }: CardMiniProps) {
 
       {/* Holders count - bottom right */}
       <div className="absolute bottom-3 right-5 text-xs text-white/50">
-        {card.Holders.length} holder{card.Holders.length !== 1 ? "s" : ""}
+        {card.Holders.length} titular{card.Holders.length !== 1 ? "es" : ""}
       </div>
     </button>
   )

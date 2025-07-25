@@ -8,7 +8,7 @@ import { useRouter } from "next/navigation"
 import { TrendingUp, TrendingDown } from "lucide-react"
 import type { CardData } from "@/lib/types"
 import { useCardStore } from "@/globalstores/cardStore"
-
+import { UpcomingInstallments } from "@/components/cards/upcoming-installments"
 
 export function CardsOverview() {
   const router = useRouter()
@@ -85,7 +85,7 @@ export function CardsOverview() {
       <div className="px-6 pb-6">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-lg font-semibold text-white">Tarjetas</h3>
-          <span className="text-sm text-gray-400">{cardsData.length} cards</span>
+          <span className="text-sm text-gray-400">{cardsData.length} tarjetas</span>
         </div>
 
         <div className="grid grid-cols-1 gap-6">
@@ -94,6 +94,7 @@ export function CardsOverview() {
           ))}
         </div>
       </div>
+       {/* <UpcomingInstallments /> */}
     </div>
   )
 }

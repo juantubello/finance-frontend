@@ -8,7 +8,7 @@ export default function CardsPage() {
       <div className="bg-gradient-to-br from-gray-900 via-gray-800 to-black pb-20">
         <MobileHeader title="Cards" />
         <CardsOverview />
-        <UpcomingInstallments />
+        {/* <UpcomingInstallments /> */}
       </div>
     </div>
   )

@@ -69,9 +69,16 @@ export function CardDetailView({ card }: CardDetailViewProps) {
     return holder.Expenses.filter((expense) => expense.description.toLowerCase().includes(searchTerm.toLowerCase()))
   }
 
-  const getFilteredTotal = (holder: CardHolder) => {
+  const getFilteredTotals = (holder: CardHolder) => {
     const filteredExpenses = getFilteredExpenses(holder)
-    return filteredExpenses.reduce((sum, expense) => sum + expense.amount, 0)
+    const usdExpenses = filteredExpenses.filter(expense => expense.description.includes("USD"))
+    const nonUsdExpenses = filteredExpenses.filter(expense => !expense.description.includes("USD"))
+    
+    return {
+      total: filteredExpenses.reduce((sum, expense) => sum + expense.amount, 0),
+      usdTotal: usdExpenses.reduce((sum, expense) => sum + expense.amount, 0),
+      nonUsdTotal: nonUsdExpenses.reduce((sum, expense) => sum + expense.amount, 0)
+    }
   }
 
   return (
@@ -81,7 +88,7 @@ export function CardDetailView({ card }: CardDetailViewProps) {
         <button onClick={() => router.back()}>
           <ArrowLeft className="w-6 h-6 text-white" />
         </button>
-        <h1 className="text-lg font-semibold text-white">Card Details</h1>
+        <h1 className="text-lg font-semibold text-white">Detalles de tarjeta</h1>
       </div>
 
       {/* Card Summary */}
@@ -122,7 +129,7 @@ export function CardDetailView({ card }: CardDetailViewProps) {
         <div className="space-y-6">
           {card.Holders.map((holder) => {
             const filteredExpenses = getFilteredExpenses(holder)
-            const filteredTotal = getFilteredTotal(holder)
+            const { total, usdTotal, nonUsdTotal } = getFilteredTotals(holder)
 
             return (
               <div
@@ -154,7 +161,7 @@ export function CardDetailView({ card }: CardDetailViewProps) {
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
                     <input
                       type="text"
-                      placeholder={`Search ${holder.holder}'s expenses...`}
+                      placeholder={`Buscar en gastos de ${holder.holder}`}
                       value={holderFilters[holder.holder] || ""}
                       onChange={(e) => updateHolderFilter(holder.holder, e.target.value)}
                       className="w-full pl-10 pr-4 py-2 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-white placeholder-gray-400"
@@ -163,11 +170,28 @@ export function CardDetailView({ card }: CardDetailViewProps) {
 
                   <div className="mt-2 flex items-center justify-between text-sm">
                     <span className="text-gray-400">
-                      {filteredExpenses.length} of {holder.Expenses.length} expenses
+                      {filteredExpenses.length} de {holder.Expenses.length} gastos
                     </span>
-                    <span className="font-semibold text-white">
-                      Filtered Total: ${filteredTotal.toLocaleString("es-AR", { minimumFractionDigits: 2 })}
-                    </span>
+                  </div>
+                  <div className="mt-2 grid grid-cols-2 gap-2 text-sm">
+                    <div>
+                      <span className="text-gray-400">Total:</span>
+                      <span className="font-semibold text-white ml-1">
+                        ${total.toLocaleString("es-AR", { minimumFractionDigits: 2 })}
+                      </span>
+                    </div>
+                    <div>
+                      <span className="text-gray-400">USD:</span>
+                      <span className="font-semibold text-green-400 ml-1">
+                        ${usdTotal.toLocaleString("es-AR", { minimumFractionDigits: 2 })}
+                      </span>
+                    </div>
+                    <div>
+                      <span className="text-gray-400">ARS:</span>
+                      <span className="font-semibold text-blue-400 ml-1">
+                        ${nonUsdTotal.toLocaleString("es-AR", { minimumFractionDigits: 2 })}
+                      </span>
+                    </div>
                   </div>
                 </div>
 
@@ -176,32 +200,35 @@ export function CardDetailView({ card }: CardDetailViewProps) {
                   {filteredExpenses.length === 0 ? (
                     <div className="p-8 text-center text-gray-400">
                       <Search className="w-8 h-8 mx-auto mb-2 opacity-50" />
-                      <p>No expenses found for {holder.holder}.</p>
+                      <p>No se encontraron gastos para {holder.holder}.</p>
                     </div>
                   ) : (
                     <div className="divide-y divide-gray-700/30">
-                      {filteredExpenses.map((expense) => (
-                        <div
-                          key={`${expense.document_number}-${expense.position}`}
-                          className="p-4 hover:bg-gray-700/20 transition-colors"
-                        >
-                          <div className="flex items-start justify-between">
-                            <div className="flex-1 min-w-0">
-                              <h4 className="font-medium text-white text-sm leading-tight mb-1">
-                                {expense.description}
-                              </h4>
-                              <div className="flex items-center gap-3 text-xs text-gray-400">
-                                <span>{expense.date}</span>
-                                <span>•</span>
-                                <span>#{expense.position}</span>
+                      {filteredExpenses.map((expense) => {
+                        const isUSD = expense.description.includes("USD")
+                        return (
+                          <div
+                            key={`${expense.document_number}-${expense.position}`}
+                            className={`p-4 hover:bg-gray-700/20 transition-colors ${isUSD ? 'bg-green-900/10' : 'bg-blue-900/10'}`}
+                          >
+                            <div className="flex items-start justify-between">
+                              <div className="flex-1 min-w-0">
+                                <h4 className="font-medium text-white text-sm leading-tight mb-1">
+                                  {expense.description}
+                                </h4>
+                                <div className="flex items-center gap-3 text-xs text-gray-400">
+                                  <span>{expense.date}</span>
+                                  <span>•</span>
+                                  <span>#{expense.position}</span>
+                                </div>
+                              </div>
+                              <div className="text-right ml-3">
+                                <div className="font-semibold text-red-400 text-sm">-{expense.formatted_amount}</div>
                               </div>
                             </div>
-                            <div className="text-right ml-3">
-                              <div className="font-semibold text-red-400 text-sm">-{expense.formatted_amount}</div>
-                            </div>
                           </div>
-                        </div>
-                      ))}
+                        )
+                      })}
                     </div>
                   )}
                 </div>
