@@ -43,19 +43,27 @@ export function RecentExpensesTable() {
   }
 
   const getTypeColor = (type: string) => {
-    const colors: Record<string, string> = {
-      "Alquiler y expensas": "bg-blue-600/20 text-blue-300 border-blue-500/20",
-      "Boludeces innecesarias": "bg-red-600/20 text-red-300 border-red-500/20",
-      "Boludeces necesarias": "bg-green-600/20 text-green-300 border-green-500/20",
-      Regalos: "bg-purple-600/20 text-purple-300 border-purple-500/20",
-      "Traslado (Uber - Taxi)": "bg-yellow-600/20 text-yellow-300 border-yellow-500/20",
-      Delivery: "bg-orange-600/20 text-orange-300 border-orange-500/20",
-      "Cafe (Amelia/Posta etc)": "bg-purple-600/20 text-purple-300 border-purple-500/20",
-      Supermarket: "bg-green-600/20 text-green-300 border-green-500/20",
-      Transportation: "bg-blue-600/20 text-blue-300 border-blue-500/20",
-      Entertainment: "bg-red-600/20 text-red-300 border-red-500/20",
+    const categoryColors: Record<string, string> = {
+      "Alquiler y expensas": "bg-[#194D12] text-white-800 border-[#194D12]/100",
+      "Supermercado": "bg-[#5C8BD6] text-white-800 border-[#5C8BD6]/100",
+      "Servicios": "bg-[#301FED] text-white-800 border-[#301FED]/100",
+      "Delivery": "bg-[#E0791B] text-white-800 border-[#E0791B]/100",
+      "Boludeces necesarias": "bg-[#0DA5B5] text-white-800 border-[#0DA5B5]/100",
+      "Boludeces innecesarias": "bg-[#D61C1C] text-white-800 border-[#D61C1C]/100",
+      "Auto": "bg-[#8D9491] text-white-800 border-[#8D9491]/100",
+      "Gatas": "bg-[#D081D4] text-white-800 border-[#D081D4]/100",
+      "Comida fuera de casa": "bg-[#6E3440] text-white-800 border-[#6E3440]/100",
+      "Traslado (Uber - Taxi)": "bg-[#DEB61B] text-white-800 border-[#DEB61B]/100",
+      "Regalos": "bg-[#6B8A82] text-white-800 border-[#6B8A82]/100",
+      "Cafe's": "bg-[#7D583E] text-white-800 border-[#7D583E]/100",
+      "Pago tarjetas": "bg-[#403739] text-white-800 border-[#403739]/100",
+      "Medicamentos": "bg-[#82B88C] text-white-800 border-[#82B88C]/100",
+      "Deportes": "bg-[#50346B] text-white-800 border-[#50346B]/100",
+      "Monotributo": "bg-[#242B57] text-white-800 border-[#242B57]/100",
+      "Otro": "bg-[#0EC78D] text-white-800 border-[#0EC78D]/100",
     }
-    return colors[type] || "bg-gray-600/20 text-gray-300 border-gray-500/20"
+
+    return categoryColors[type] || "bg-gray-600/20 text-gray-300 border-gray-500/30"
   }
 
   if (isLoading) {
