@@ -24,16 +24,22 @@ export function formatCurrency(amount: number, currency: "ARS" | "USD" = "ARS") 
 // Utility function to get expense categories
 export function getExpenseCategories() {
   return [
-    "All Categories",
+    "Alquiler y expensas",
+    "Supermercado",
+    "Servicios",
     "Delivery",
-    "Cafe (Amelia/Posta etc)",
-    "Supermarket",
-    "Transportation",
-    "Entertainment",
-    "Shopping",
-    "Services",
-    "Health",
-    "Other",
+    "Boludeces necesarias",
+    "Boludeces innecesarias",
+    "Auto",
+    "Gatas",
+    "Comida fuera de casa",
+    "Traslado (Uber - Taxi)",
+    "Regalos",
+    "Cafe's",
+    "Pago tarjetas",
+    "Medicamentos",
+    "Deportes",
+    "Monotributo",
   ]
 }
 
@@ -41,15 +47,15 @@ export function getExpenseCategories() {
 export function categorizeExpense(description: string): string {
   const desc = description.toLowerCase()
 
-  if (desc.includes("mcdonald") || desc.includes("delivery")) return "Delivery"
-  if (desc.includes("cafe") || desc.includes("amelia") || desc.includes("coffee")) return "Cafe (Amelia/Posta etc)"
-  if (desc.includes("super") || desc.includes("disco") || desc.includes("dia tienda")) return "Supermarket"
-  if (desc.includes("gas") || desc.includes("transport") || desc.includes("uber")) return "Transportation"
-  if (desc.includes("netflix") || desc.includes("youtube") || desc.includes("streaming")) return "Entertainment"
-  if (desc.includes("mercadolibre") || desc.includes("shopping")) return "Shopping"
-  if (desc.includes("osde") || desc.includes("health")) return "Health"
+  //if (desc.includes("mcdonald") || desc.includes("delivery")) return "Delivery"
+  //if (desc.includes("cafe") || desc.includes("amelia") || desc.includes("coffee")) return "Cafe (Amelia/Posta etc)"
+  //if (desc.includes("super") || desc.includes("disco") || desc.includes("dia tienda")) return "Supermarket"
+  //if (desc.includes("gas") || desc.includes("transport") || desc.includes("uber")) return "Transportation"
+  //if (desc.includes("netflix") || desc.includes("youtube") || desc.includes("streaming")) return "Entertainment"
+  //if (desc.includes("mercadolibre") || desc.includes("shopping")) return "Shopping"
+  //if (desc.includes("osde") || desc.includes("health")) return "Health"
 
-  return "Other"
+  return ""
 }
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))

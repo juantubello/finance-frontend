@@ -68,13 +68,20 @@ const generateCategoryColor = (index: number): string => {
     "#3b82f6", // blue
     "#8b5cf6", // purple
     "#10b981", // green
-    "#f59e0b", // amber
+    "#800000", // maroon (bordó)
     "#ef4444", // red
     "#06b6d4", // cyan
     "#f97316", // orange
     "#84cc16", // lime
     "#ec4899", // pink
-    "#6366f1", // indigo
+    "#374151", // neutral-700 — gris oscuro tirando a negro
+    "#14b8a6", // teal
+    "#eab308", // yellow
+    "#8b4513", // brown (marrón)
+    "#ffffff", // white
+    "#9ca3af", // gray (gris)
+    "#ffc0cb", // light pink (rosa bebé)
+    "#fb7185", // rose
   ]
   return colors[index % colors.length]
 }
@@ -190,7 +197,7 @@ export async function getIncomes(year: number, month: number): Promise<IncomeDat
 
 export async function syncExpenses(historical: boolean): Promise<SyncExpensesResponse> {
   try {
-    
+
     let response: Response
 
     if (historical) {
@@ -229,7 +236,7 @@ export async function syncIncomes(historical: boolean): Promise<SyncIncomeRespon
 
     const data: SyncIncomeResponse = await response.json()
     return data
-    
+
   } catch (error) {
     console.error("Error sincronizando expensas:", error)
     throw error
