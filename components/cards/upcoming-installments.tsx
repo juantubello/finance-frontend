@@ -79,11 +79,10 @@ export function AppsSubscriptions() {
                   <Image
                     src={`/logos/${sub.logo_name}`}
                     alt={sub.service}
-                    width={28}
-                    height={28}
-                    className="object-contain"
+                    width={32}
+                    height={32}
+                    className="object-contain w-8 h-8 rounded bg-white p-1"
                   />
-
                   <span className="text-sm text-white font-medium">{sub.service}</span>
                 </div>
                 <span
