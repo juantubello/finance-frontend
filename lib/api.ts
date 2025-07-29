@@ -1,7 +1,7 @@
 "use client"
 
-import { expensesData, incomeData, cardsData, categorySpendingData } from "./data"
-import type { ExpensesData, IncomeData, CardData, CategorySpending, ExpenseItem, IncomeItem } from "./types"
+import { expensesData, incomeData, cardsData, categorySpendingData, subscriptionData } from "./data"
+import type { ExpensesData, IncomeData, CardData, CategorySpending, ExpenseItem, IncomeItem, CardsSubscriptions } from "./types"
 
 const USE_API = process.env.NEXT_PUBLIC_USE_API === "1"
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8080"
@@ -298,5 +298,29 @@ export async function getCardsExpenses(
   } catch (error) {
     console.error("Error fetching cards expenses:", error)
     return cardsData // Fallback to hardcoded data
+  }
+}
+
+export async function getCardsSubscriptions(
+  year: number,
+  month: number,
+): Promise<CardsSubscriptions[]> {
+  if (!USE_API) {
+    return subscriptionData
+  }
+
+  try {
+    const { year: yearStr, month: monthStr } = formatDateParams(year, month)
+    const response = await fetch(
+      `${API_BASE_URL}/cards/subscriptions?year=${yearStr}&month=${monthStr}`,
+    )
+
+    if (!response.ok) throw new Error("Failed to fetch cards expenses")
+
+    const data: CardsSubscriptions[] = await response.json()
+    return data
+  } catch (error) {
+    console.error("Error fetching cards expenses:", error)
+    return subscriptionData // Fallback to hardcoded data
   }
 }

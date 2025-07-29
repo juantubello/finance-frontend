@@ -118,6 +118,13 @@ export interface CardData {
   Holders: CardHolder[]
 }
 
+export interface CardsSubscriptions {
+  service: string
+  total_amount: number
+  total_amount_formatted: string
+  logo_name: string
+}
+
 export interface DateFilter {
   month: number
   year: number

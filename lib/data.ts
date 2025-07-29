@@ -1,5 +1,5 @@
 import { format } from "path"
-import type { Transaction, Category, Account, Bill, Subscription, SpendingData, CardData } from "./types"
+import type { Transaction, Category, Account, Bill, Subscription, SpendingData, CardData, CardsSubscriptions } from "./types"
 
 export const spendingData: SpendingData[] = [
   { month: "Apr", amount: 450, percentage: 45 },
@@ -358,5 +358,13 @@ export const cardsData: CardData[] = [
         ],
       },
     ],
+  },
+]
+export const subscriptionData: CardsSubscriptions[] = [
+  {
+    service: "ERROR",
+    total_amount: 0,
+    total_amount_formatted: "0",
+    logo_name: ""
   },
 ]

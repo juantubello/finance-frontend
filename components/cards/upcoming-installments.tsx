@@ -1,45 +1,53 @@
 "use client"
 
 import { Calendar } from "lucide-react"
+import { useState, useEffect } from "react"
+import type { CardsSubscriptions } from "@/lib/types"
+import { getCardsSubscriptions } from "@/lib/api"
+import { useDateFilter } from "@/lib/context/date-filter-context"
+import Image from "next/image"
 
-interface Installment {
-  id: number
-  description: string
-  amount: number
-  formatted_amount: string
-  date: string
-  installment_number: string
-}
+export function AppsSubscriptions() {
+  const { dateFilter } = useDateFilter()
+  const [cardsSubscriptionsData, setSubscriptionsData] = useState<CardsSubscriptions[]>([])
+  const [isLoading, setIsLoading] = useState(true)
 
-const dummyInstallments: Installment[] = [
-  {
-    id: 1,
-    description: "MERPAGO+PRIMOFFICE C.11/12 260183",
-    amount: 6164.13,
-    formatted_amount: "$6.164,13",
-    date: "04/08/2024",
-    installment_number: "#1",
-  },
-  {
-    id: 43,
-    description: "NAME-CHEAP.COM+ USD 13,16 485607",
-    amount: 13.16,
-    formatted_amount: "$13,16",
-    date: "22/06/2025",
-    installment_number: "#43",
-  },
-  {
-    id: 44,
-    description: "GOOGLE +YouTubeP P1cb0NuH USD 5,94 645725",
-    amount: 5.94,
-    formatted_amount: "$5,94",
-    date: "22/06/2025",
-    installment_number: "#44",
-  },
-]
+  useEffect(() => {
+    const fetchData = async () => {
+      setIsLoading(true)
+      try {
+        const subscriptionData = await getCardsSubscriptions(dateFilter.year, dateFilter.month)
+        setSubscriptionsData(subscriptionData)
+      } catch (error) {
+        console.error("Error loading cards data:", error)
+      } finally {
+        setIsLoading(false)
+      }
+    }
 
-export function UpcomingInstallments() {
-  const totalAmount = dummyInstallments.reduce((sum, installment) => sum + installment.amount, 0)
+    fetchData()
+  }, [dateFilter])
+
+  // Separar ARS y USD
+  const usdTotal = cardsSubscriptionsData
+    .filter((s) => s.service.toLowerCase().includes("usd"))
+    .reduce((acc, s) => acc + s.total_amount, 0)
+
+  const arsTotal = cardsSubscriptionsData
+    .filter((s) => !s.service.toLowerCase().includes("usd"))
+    .reduce((acc, s) => acc + s.total_amount, 0)
+
+  const totalFormatted = (arsTotal + usdTotal).toLocaleString("es-AR", {
+    minimumFractionDigits: 2
+  })
+
+  const usdFormatted = usdTotal.toLocaleString("es-AR", {
+    minimumFractionDigits: 2
+  })
+
+  const arsFormatted = arsTotal.toLocaleString("es-AR", {
+    minimumFractionDigits: 2
+  })
 
   return (
     <div className="px-6 pb-6">
@@ -47,40 +55,47 @@ export function UpcomingInstallments() {
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
             <Calendar className="w-5 h-5 text-orange-400" />
-            <h3 className="text-lg font-semibold text-white">Cuotas a vencer</h3>
-          </div>
-          <div className="text-right">
-            <div className="text-sm text-gray-400">Total</div>
-            <div className="text-lg font-bold text-orange-400">
-              ${totalAmount.toLocaleString("es-AR", { minimumFractionDigits: 2 })}
-            </div>
+            <h3 className="text-lg font-semibold text-white">Apps y suscripciones</h3>
           </div>
         </div>
 
-        <div className="space-y-3 max-h-64 overflow-y-auto">
-          {dummyInstallments.map((installment) => (
-            <div
-              key={installment.id}
-              className="bg-gray-700/50 border border-gray-600/50 rounded-xl p-3 hover:bg-gray-700/70 transition-colors"
-            >
-              <div className="flex items-center justify-between mb-2">
-                <div className="flex-1">
-                  <h4 className="font-medium text-white text-sm leading-tight">{installment.description}</h4>
-                  <p className="text-xs text-gray-400 mt-1">{installment.date}</p>
-                </div>
-                <div className="text-right ml-3">
-                  <div className="font-semibold text-red-400">-{installment.formatted_amount}</div>
-                </div>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="px-2 py-1 rounded-full text-xs font-medium bg-orange-600/20 text-orange-300 border border-orange-500/20">
-                  Installment
-                </span>
-                <span className="text-xs text-gray-500">ID: {installment.id}</span>
-              </div>
-            </div>
-          ))}
+        <div className="flex justify-end gap-3 mb-3 text-sm">
+          <span className="text-blue-300">ARS: ${arsFormatted}</span>
+          <span className="text-green-400">USD: ${usdFormatted}</span>
         </div>
+
+        {isLoading ? (
+          <div className="text-gray-400 text-sm text-center">Cargando suscripciones...</div>
+        ) : cardsSubscriptionsData.length === 0 ? (
+          <div className="text-gray-500 text-sm text-center">No se encontraron suscripciones este mes.</div>
+        ) : (
+          <div className="space-y-3 max-h-[500px] overflow-y-auto pr-1" style={{ scrollbarGutter: "stable" }}>
+            {cardsSubscriptionsData.map((sub) => (
+              <div
+                key={sub.service}
+                className="flex items-center justify-between p-2 bg-gray-700/40 rounded-xl border border-gray-600/40 shadow"
+              >
+                <div className="flex items-center gap-3">
+                  <Image
+                    src={`/logos/${sub.logo_name}`}
+                    alt={sub.service}
+                    width={28}
+                    height={28}
+                    className="object-contain"
+                  />
+
+                  <span className="text-sm text-white font-medium">{sub.service}</span>
+                </div>
+                <span
+                  className={`text-sm font-semibold ${sub.service.toLowerCase().includes("usd") ? "text-green-400" : "text-blue-300"
+                    }`}
+                >
+                  {sub.total_amount_formatted}
+                </span>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   )

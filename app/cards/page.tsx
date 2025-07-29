@@ -1,6 +1,6 @@
 import { MobileHeader } from "@/components/layout/mobile-header"
 import { CardsOverview } from "@/components/cards/cards-overview"
-import { UpcomingInstallments } from "@/components/cards/upcoming-installments"
+import { AppsSubscriptions } from "@/components/cards/upcoming-installments"
 
 export default function CardsPage() {
   return (
