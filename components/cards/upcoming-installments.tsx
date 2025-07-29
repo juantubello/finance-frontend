@@ -54,8 +54,8 @@ export function AppsSubscriptions() {
       <div className="bg-gray-800/80 backdrop-blur-sm border border-gray-700/50 rounded-2xl p-4 shadow-xl">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
-            <Calendar className="w-5 h-5 text-orange-400" />
-            <h3 className="text-lg font-semibold text-white">Apps y suscripciones</h3>
+            <Calendar className="w-5 h-5 text-blue-400" />
+            <h3 className="text-lg font-semibold text-white">Cobros mensuales</h3>
           </div>
         </div>
 
