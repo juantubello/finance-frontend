@@ -17,9 +17,10 @@ export function AppsSubscriptions() {
       setIsLoading(true)
       try {
         const subscriptionData = await getCardsSubscriptions(dateFilter.year, dateFilter.month)
-        setSubscriptionsData(subscriptionData)
+        setSubscriptionsData(Array.isArray(subscriptionData) ? subscriptionData : [])
       } catch (error) {
         console.error("Error loading cards data:", error)
+        setSubscriptionsData([])
       } finally {
         setIsLoading(false)
       }
@@ -28,26 +29,18 @@ export function AppsSubscriptions() {
     fetchData()
   }, [dateFilter])
 
-  // Separar ARS y USD
-  const usdTotal = cardsSubscriptionsData
+  const validData = Array.isArray(cardsSubscriptionsData) ? cardsSubscriptionsData : []
+
+  const usdTotal = validData
     .filter((s) => s.service.toLowerCase().includes("usd"))
     .reduce((acc, s) => acc + s.total_amount, 0)
 
-  const arsTotal = cardsSubscriptionsData
+  const arsTotal = validData
     .filter((s) => !s.service.toLowerCase().includes("usd"))
     .reduce((acc, s) => acc + s.total_amount, 0)
 
-  const totalFormatted = (arsTotal + usdTotal).toLocaleString("es-AR", {
-    minimumFractionDigits: 2
-  })
-
-  const usdFormatted = usdTotal.toLocaleString("es-AR", {
-    minimumFractionDigits: 2
-  })
-
-  const arsFormatted = arsTotal.toLocaleString("es-AR", {
-    minimumFractionDigits: 2
-  })
+  const usdFormatted = usdTotal.toLocaleString("es-AR", { minimumFractionDigits: 2 })
+  const arsFormatted = arsTotal.toLocaleString("es-AR", { minimumFractionDigits: 2 })
 
   return (
     <div className="px-6 pb-6">
