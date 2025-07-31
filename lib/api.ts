@@ -324,3 +324,27 @@ export async function getCardsSubscriptions(
     return subscriptionData // Fallback to hardcoded data
   }
 }
+
+export async function getCardSpecificExpenses(
+  year: number,
+  month: number,
+): Promise<CardsSubscriptions[]> {
+  if (!USE_API) {
+    return subscriptionData
+  }
+
+  try {
+    const { year: yearStr, month: monthStr } = formatDateParams(year, month)
+    const response = await fetch(
+      `${API_BASE_URL}/cards/specificexpenses?year=${yearStr}&month=${monthStr}`,
+    )
+
+    if (!response.ok) throw new Error("Failed to fetch cards expenses")
+
+    const data: CardsSubscriptions[] = await response.json()
+    return data
+  } catch (error) {
+    console.error("Error fetching cards expenses:", error)
+    return subscriptionData // Fallback to hardcoded data
+  }
+}

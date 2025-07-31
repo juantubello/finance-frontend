@@ -1,12 +1,12 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { getCardsExpenses, getCardsSubscriptions } from "@/lib/api"
+import { getCardsExpenses } from "@/lib/api"
 import { useDateFilter } from "@/lib/context/date-filter-context"
 import { CardMini } from "./card-mini"
 import { useRouter } from "next/navigation"
 import { TrendingUp, TrendingDown } from "lucide-react"
-import type { CardData, CardsSubscriptions } from "@/lib/types"
+import type { CardData } from "@/lib/types"
 import { useCardStore } from "@/globalstores/cardStore"
 import { AppsSubscriptions } from "@/components/cards/upcoming-installments"
 
@@ -14,19 +14,16 @@ export function CardsOverview() {
   const router = useRouter()
   const { dateFilter } = useDateFilter()
   const [cardsData, setCardsData] = useState<CardData[]>([])
-  const [cardsSubscriptionsData, setSubscriptionsData] = useState<CardsSubscriptions[]>([])
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
     const fetchData = async () => {
       setIsLoading(true)
       try {
+
         const data = await getCardsExpenses(dateFilter.year, dateFilter.month)
         setCardsData(data)
         useCardStore.getState().setCardsData(data)
-
-        const subscriptionData = await getCardsSubscriptions(dateFilter.year, dateFilter.month)
-        setSubscriptionsData(subscriptionData)
 
       } catch (error) {
         console.error("Error loading cards data:", error)
