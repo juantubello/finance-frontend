@@ -16,7 +16,7 @@ import {
 
 import type { ExpenseItem, IncomeItem } from "@/lib/types"
 
-import { syncExpenses, syncIncomes } from "@/lib/api"
+import { syncExpenses, syncIncomes, syncResumes } from "@/lib/api"
 
 interface SyncNotification {
   id: string
@@ -140,7 +140,7 @@ export function SyncSection() {
           syncName = "ingresos historicos"
           break
         case "sync-resumes":
-          // Implement resume sync logic here
+          await syncResumes()
           success = true
           syncName = "resumes"
           break
@@ -162,8 +162,13 @@ export function SyncSection() {
           addNotification("success", `${added} ${syncName} sincronizados`)
         } else if (deleted) {
           addNotification("success", `${deleted} ${syncName} eliminados`)
-        }else{
-          addNotification("info", `no existen nuevos ${syncName} para sincronizar`)
+        } else {
+          if (syncName = "resumes") {
+            addNotification("info", `Sincronización de resumenes iniciada`)
+          } else {
+            addNotification("info", `no existen nuevos ${syncName} para sincronizar`)
+          }
+
         }
       }
 
@@ -279,52 +284,52 @@ export function SyncSection() {
       )}
 
       {/* Notifications */}
-<div className="fixed bottom-24 left-4 right-4 z-40 space-y-2 max-w-md mx-auto">
-  {notifications.map((notification) => {
-    let bgColor = ""
-    let borderColor = ""
-    let textColor = "text-white"
-    let Icon = AlertCircle
-    let iconColor = ""
+      <div className="fixed bottom-24 left-4 right-4 z-40 space-y-2 max-w-md mx-auto">
+        {notifications.map((notification) => {
+          let bgColor = ""
+          let borderColor = ""
+          let textColor = "text-white"
+          let Icon = AlertCircle
+          let iconColor = ""
 
-    switch (notification.type) {
-      case "success":
-        bgColor = "bg-green-600/90"
-        borderColor = "border-green-500/50"
-        iconColor = "text-green-200"
-        Icon = CheckCircle
-        break
-      case "info":
-        bgColor = "bg-blue-600/90"
-        borderColor = "border-blue-500/50"
-        iconColor = "text-blue-200"
-        Icon = Info
-        break
-      default:
-        bgColor = "bg-red-600/90"
-        borderColor = "border-red-500/50"
-        iconColor = "text-red-200"
-        Icon = AlertCircle
-        break
-    }
+          switch (notification.type) {
+            case "success":
+              bgColor = "bg-green-600/90"
+              borderColor = "border-green-500/50"
+              iconColor = "text-green-200"
+              Icon = CheckCircle
+              break
+            case "info":
+              bgColor = "bg-blue-600/90"
+              borderColor = "border-blue-500/50"
+              iconColor = "text-blue-200"
+              Icon = Info
+              break
+            default:
+              bgColor = "bg-red-600/90"
+              borderColor = "border-red-500/50"
+              iconColor = "text-red-200"
+              Icon = AlertCircle
+              break
+          }
 
-    return (
-      <div
-        key={notification.id}
-        className={`flex items-center gap-3 p-3 rounded-lg shadow-lg backdrop-blur-sm border animate-in slide-in-from-bottom-2 ${bgColor} ${borderColor} ${textColor}`}
-      >
-        <Icon className={`w-5 h-5 ${iconColor}`} />
-        <span className="flex-1 text-sm font-medium">{notification.message}</span>
-        <button
-          onClick={() => removeNotification(notification.id)}
-          className="text-white/70 hover:text-white"
-        >
-          <X className="w-4 h-4" />
-        </button>
+          return (
+            <div
+              key={notification.id}
+              className={`flex items-center gap-3 p-3 rounded-lg shadow-lg backdrop-blur-sm border animate-in slide-in-from-bottom-2 ${bgColor} ${borderColor} ${textColor}`}
+            >
+              <Icon className={`w-5 h-5 ${iconColor}`} />
+              <span className="flex-1 text-sm font-medium">{notification.message}</span>
+              <button
+                onClick={() => removeNotification(notification.id)}
+                className="text-white/70 hover:text-white"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+          )
+        })}
       </div>
-    )
-  })}
-</div>
 
     </>
   )

@@ -55,6 +55,11 @@ export interface SyncExpensesResponse {
   inserted_rows_details: ExpenseItem[]
 }
 
+export interface SyncResumeResponse {
+  processed: boolean
+  error: string
+}
+
 export interface SyncIncomeResponse {
   rows_deleted: number
   deleted_rows_detail: IncomeItem[]
@@ -212,6 +217,32 @@ export async function syncExpenses(historical: boolean): Promise<SyncExpensesRes
 
     const data: SyncExpensesResponse = await response.json()
     return data
+
+  } catch (error) {
+    console.error("Error sincronizando expensas:", error)
+    throw error
+  }
+}
+
+export async function syncResumes(): Promise<SyncResumeResponse> {
+  try {
+
+    let response: Response
+    response = await fetch(`${API_BASE_URL}/cards/sync/resumes`)
+
+    let syncResumeResponse: SyncResumeResponse = {
+      error: "",
+      processed: false
+    }
+
+    if (!response.ok) {
+        throw new Error(`Error ${response.status} en servidor`)
+    } else {
+      syncResumeResponse.error = ""
+      syncResumeResponse.processed = true
+    }
+
+    return syncResumeResponse
 
   } catch (error) {
     console.error("Error sincronizando expensas:", error)
