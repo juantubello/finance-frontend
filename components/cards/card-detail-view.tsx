@@ -73,7 +73,7 @@ export function CardDetailView({ card }: CardDetailViewProps) {
     const filteredExpenses = getFilteredExpenses(holder)
     const usdExpenses = filteredExpenses.filter(expense => expense.description.includes("USD"))
     const nonUsdExpenses = filteredExpenses.filter(expense => !expense.description.includes("USD"))
-    
+
     return {
       total: filteredExpenses.reduce((sum, expense) => sum + expense.amount, 0),
       usdTotal: usdExpenses.reduce((sum, expense) => sum + expense.amount, 0),
@@ -126,7 +126,7 @@ export function CardDetailView({ card }: CardDetailViewProps) {
         </div>
 
         {/* Holders Tables */}
-        <div className="space-y-6">
+        <div className="space-y-5">
           {card.Holders.map((holder) => {
             const filteredExpenses = getFilteredExpenses(holder)
             const { total, usdTotal, nonUsdTotal } = getFilteredTotals(holder)
@@ -134,73 +134,68 @@ export function CardDetailView({ card }: CardDetailViewProps) {
             return (
               <div
                 key={holder.holder}
-                className="bg-gray-800/80 backdrop-blur-sm border border-gray-700/50 rounded-2xl overflow-hidden shadow-xl"
+                className="bg-gray-800/80 backdrop-blur-sm border border-gray-700/50 rounded-xl overflow-hidden shadow-md"
               >
                 {/* Holder Header */}
-                <div className="p-4 border-b border-gray-700/30 bg-gray-700/30">
-                  <div className="flex items-center gap-3 mb-3">
-                    <User className="w-5 h-5 text-blue-400" />
-                    <h3 className="font-semibold text-white">{holder.holder}</h3>
+                <div className="p-3 border-b border-gray-700/30 bg-gray-700/30">
+                  <div className="flex items-center gap-2 mb-2">
+                    <User className="w-4 h-4 text-blue-400" />
+                    <h3 className="font-semibold text-sm text-white">{holder.holder}</h3>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-4 text-sm">
+                  <div className="grid grid-cols-2 gap-3 text-xs">
                     <div>
                       <span className="text-gray-400">Total ARS:</span>
-                      <div className="font-semibold text-white">{holder.formatted_total_ars}</div>
+                      <div className="font-medium text-white">{holder.formatted_total_ars}</div>
                     </div>
                     <div>
                       <span className="text-gray-400">Total USD:</span>
-                      <div className="font-semibold text-white">{holder.formatted_total_usd}</div>
+                      <div className="font-medium text-white">{holder.formatted_total_usd}</div>
                     </div>
                   </div>
                 </div>
 
                 {/* Search Filter */}
-                <div className="p-4 border-b border-gray-700/30 bg-gray-700/20">
+                <div className="p-3 border-b border-gray-700/30 bg-gray-700/20">
                   <div className="relative">
-                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-3.5 h-3.5 text-gray-400" />
                     <input
                       type="text"
                       placeholder={`Buscar en gastos de ${holder.holder}`}
                       value={holderFilters[holder.holder] || ""}
                       onChange={(e) => updateHolderFilter(holder.holder, e.target.value)}
-                      className="w-full pl-10 pr-4 py-2 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-white placeholder-gray-400"
+                      className="w-full pl-9 pr-3 py-[6px] text-sm bg-gray-700 border border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-white placeholder-gray-400"
                     />
                   </div>
 
-                  <div className="mt-2 flex items-center justify-between text-sm">
-                    <span className="text-gray-400">
+                  <div className="mt-1.5 flex items-center justify-between text-xs text-gray-400">
+                    <span>
                       {filteredExpenses.length} de {holder.Expenses.length} gastos
                     </span>
                   </div>
-                  <div className="mt-2 grid grid-cols-2 gap-2 text-sm">
+
+                  <div className="mt-2 grid grid-cols-2 gap-2 text-xs">
                     <div>
-                      <span className="text-gray-400">Total:</span>
-                      <span className="font-semibold text-white ml-1">
-                        ${total.toLocaleString("es-AR", { minimumFractionDigits: 2 })}
+                      <span className="text-gray-400">ARS:</span>
+                      <span className="font-medium text-blue-400 ml-1">
+                        ${nonUsdTotal.toLocaleString("es-AR", { minimumFractionDigits: 2 })}
                       </span>
                     </div>
                     <div>
                       <span className="text-gray-400">USD:</span>
-                      <span className="font-semibold text-green-400 ml-1">
+                      <span className="font-medium text-green-400 ml-1">
                         ${usdTotal.toLocaleString("es-AR", { minimumFractionDigits: 2 })}
-                      </span>
-                    </div>
-                    <div>
-                      <span className="text-gray-400">ARS:</span>
-                      <span className="font-semibold text-blue-400 ml-1">
-                        ${nonUsdTotal.toLocaleString("es-AR", { minimumFractionDigits: 2 })}
                       </span>
                     </div>
                   </div>
                 </div>
 
-                {/* Expenses Table - Scrollable for ~50 records */}
+                {/* Expenses Table */}
                 <div className="max-h-96 overflow-y-auto">
                   {filteredExpenses.length === 0 ? (
-                    <div className="p-8 text-center text-gray-400">
-                      <Search className="w-8 h-8 mx-auto mb-2 opacity-50" />
-                      <p>No se encontraron gastos para {holder.holder}.</p>
+                    <div className="p-6 text-center text-gray-400">
+                      <Search className="w-7 h-7 mx-auto mb-2 opacity-50" />
+                      <p className="text-sm">No se encontraron gastos para {holder.holder}.</p>
                     </div>
                   ) : (
                     <div className="divide-y divide-gray-700/30">
@@ -209,20 +204,16 @@ export function CardDetailView({ card }: CardDetailViewProps) {
                         return (
                           <div
                             key={`${expense.document_number}-${expense.position}`}
-                            className={`p-4 hover:bg-gray-700/20 transition-colors ${isUSD ? 'bg-green-900/10' : 'bg-blue-900/10'}`}
+                            className={`p-3 hover:bg-gray-700/60 transition-colors ${isUSD ? 'bg-green-900/40' : 'bg-blue-900/10'}`}
                           >
                             <div className="flex items-start justify-between">
                               <div className="flex-1 min-w-0">
-                                <h4 className="font-medium text-white text-sm leading-tight mb-1">
-                                  {expense.description}
-                                </h4>
-                                <div className="flex items-center gap-3 text-xs text-gray-400">
+                                <div className="flex items-center gap-2 text-[11px] text-gray-400">
                                   <span>{expense.date}</span>
-                                  <span>•</span>
-                                  <span>#{expense.position}</span>
                                 </div>
+                                <h4 className="font-small text-white text-sm leading-tight mb-1">{expense.description}</h4>
                               </div>
-                              <div className="text-right ml-3">
+                              <div className="text-right ml-2">
                                 <div className="font-semibold text-red-400 text-sm">-{expense.formatted_amount}</div>
                               </div>
                             </div>
@@ -236,6 +227,7 @@ export function CardDetailView({ card }: CardDetailViewProps) {
             )
           })}
         </div>
+
       </div>
     </div>
   )

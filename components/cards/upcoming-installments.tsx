@@ -210,7 +210,7 @@ export function AppsSubscriptions() {
                 className="flex items-center justify-between p-2 bg-gray-700/40 rounded-xl border border-gray-600/40 shadow"
               >
                 <div className="flex items-center gap-3">
-                  <span className="text-sm text-white font-medium">{sub.service}</span>
+                  <span className="text-sm text-white font-small">{sub.service}</span>
                 </div>
                 <span
                   className={`text-sm font-semibold ${sub.service.toLowerCase().includes("usd") ? "text-green-400" : "text-blue-300"}`}
