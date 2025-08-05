@@ -163,7 +163,7 @@ export function SyncSection() {
         } else if (deleted) {
           addNotification("success", `${deleted} ${syncName} eliminados`)
         } else {
-          if (syncName == "resumes") {
+          if (syncName === "resumes") {
             addNotification("info", `Sincronización de resumenes iniciada`)
           } else {
             addNotification("info", `no existen nuevos ${syncName} para sincronizar`)
