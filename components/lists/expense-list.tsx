@@ -157,22 +157,22 @@ export function ExpenseList() {
         {showFilters && (
           <>
             {/* Search Filter */}
-            <div className="relative mb-3">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <div className="relative mb-2">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-3.5 h-3.5 text-gray-400" />
               <input
                 type="text"
                 placeholder="Buscar por descripción"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-white placeholder-gray-400"
+                className="w-full pl-9 pr-3 py-[6px] text-sm bg-gray-700 border border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-white placeholder-gray-400"
               />
             </div>
 
             {/* Category Filter Button */}
-            <div className="mb-3">
+            <div className="mb-2">
               <button
                 onClick={() => setShowCategoryModal(true)}
-                className="w-full flex items-center justify-between p-2 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-white hover:bg-gray-600 transition-colors"
+                className="w-full flex items-center justify-between px-3 py-[6px] bg-gray-700 border border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-white hover:bg-gray-600 transition-colors text-sm"
               >
                 <span className={selectedCategories.length === 0 ? "text-gray-400" : "text-white"}>
                   {getSelectedCategoriesText()}
@@ -183,11 +183,11 @@ export function ExpenseList() {
 
             {/* Selected Categories Tags */}
             {selectedCategories.length > 0 && (
-              <div className="mb-3 flex flex-wrap gap-2">
+              <div className="mb-2 flex flex-wrap gap-1.5">
                 {selectedCategories.map((category) => (
                   <span
                     key={category}
-                    className="inline-flex items-center gap-1 px-2 py-1 bg-blue-600/20 text-blue-300 border border-blue-500/20 rounded-full text-xs"
+                    className="inline-flex items-center gap-1 px-2 py-[3px] bg-blue-600/20 text-blue-300 border border-blue-500/20 rounded-full text-[11px]"
                   >
                     {category}
                     <button onClick={() => toggleCategory(category)} className="hover:text-blue-100">
@@ -199,12 +199,12 @@ export function ExpenseList() {
             )}
 
             {/* Filter Summary and Actions */}
-            <div className="flex items-center justify-between text-sm">
-              <div className="flex items-center gap-4">
+            <div className="flex items-center justify-between text-[13px]">
+              <div className="flex items-center gap-3">
                 <span className="text-gray-400">
                   {filteredExpenses.length} de {expensesData.Expenses.length} gastos
                 </span>
-                <div className="text-blue-400 font-semibold">
+                <div className="text-blue-400 font-medium">
                   Total filtrado: ${filteredTotal.toLocaleString("es-AR", { minimumFractionDigits: 2 })}
                 </div>
               </div>
@@ -214,13 +214,14 @@ export function ExpenseList() {
                     setSearchTerm("")
                     setSelectedCategories([])
                   }}
-                  className="flex items-center gap-1 px-2 py-1 bg-gray-700 text-gray-300 rounded-full hover:bg-gray-600"
+                  className="flex items-center gap-1 px-2 py-[3px] bg-gray-700 text-gray-300 rounded-full hover:bg-gray-600 text-xs"
                 >
                   <X className="w-3 h-3" />
                   limpiar filtros
                 </button>
               )}
             </div>
+
           </>
         )}
       </div>
@@ -229,27 +230,28 @@ export function ExpenseList() {
       {showCategoryModal && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
           <div
-            className="bg-gray-800 border border-gray-600 rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden flex flex-col"
-            style={{ maxHeight: "70vh" }}
+            className="bg-gray-800 border border-gray-600 rounded-xl shadow-xl w-full max-w-sm overflow-hidden flex flex-col"
+            style={{ maxHeight: "65vh" }}
           >
-            <div className="p-4 border-b border-gray-600 flex-shrink-0">
+            <div className="p-3 border-b border-gray-600 flex-shrink-0">
               <div className="flex items-center justify-between">
-                <h3 className="text-lg font-semibold text-white">Selecion de categorias</h3>
+                <h3 className="text-base font-semibold text-white">Selección de categorías</h3>
                 <button
                   onClick={() => setShowCategoryModal(false)}
                   className="text-gray-400 hover:text-white transition-colors"
                 >
-                  <X className="w-5 h-5" />
+                  <X className="w-4 h-4" />
                 </button>
               </div>
-              <div className="flex items-center gap-2 mt-2">
-                <button onClick={clearAllCategories} className="text-xs text-blue-400 hover:text-blue-300">
+              <div className="flex items-center gap-2 mt-1">
+                <button onClick={clearAllCategories} className="text-[11px] text-blue-400 hover:text-blue-300">
                   limpiar filtros
                 </button>
-                <span className="text-xs text-gray-500">•</span>
-                <span className="text-xs text-gray-400">{selectedCategories.length} seleccionados</span>
+                <span className="text-[11px] text-gray-500">•</span>
+                <span className="text-[11px] text-gray-400">{selectedCategories.length} seleccionados</span>
               </div>
             </div>
+
             <div className="flex-1 overflow-y-auto">
               {getExpenseCategories()
                 .filter((cat) => cat !== "Todas las categorias")
@@ -257,10 +259,12 @@ export function ExpenseList() {
                   <button
                     key={category}
                     onClick={() => toggleCategory(category)}
-                    className={`w-full text-left px-4 py-3 hover:bg-gray-700 transition-colors border-b border-gray-700/50 last:border-b-0 flex items-center justify-between ${selectedCategories.includes(category) ? "bg-blue-600/20 text-blue-300" : "text-white"
+                    className={`w-full text-left px-3 py-2 hover:bg-gray-700 transition-colors border-b border-gray-700/50 last:border-b-0 flex items-center justify-between ${selectedCategories.includes(category)
+                      ? "bg-blue-600/20 text-blue-300"
+                      : "text-white"
                       }`}
                   >
-                    <span>{category}</span>
+                    <span className="text-sm">{category}</span>
                     {selectedCategories.includes(category) && <Check className="w-4 h-4 text-blue-400" />}
                   </button>
                 ))}
@@ -269,13 +273,14 @@ export function ExpenseList() {
         </div>
       )}
 
+
       {/* Expenses List */}
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-lg font-semibold text-white">Detalle de gastos</h3>
       </div>
 
       <div className="max-h-[600px] overflow-y-auto pr-2" style={{ scrollbarGutter: "stable" }}>
-        <div className="space-y-3">
+        <div className="space-y-2">
           {filteredExpenses.length === 0 ? (
             <div className="bg-gray-800/80 backdrop-blur-sm border border-gray-700/50 rounded-2xl p-8 text-center text-gray-400">
               <Search className="w-8 h-8 mx-auto mb-2 opacity-50" />
@@ -285,17 +290,21 @@ export function ExpenseList() {
             filteredExpenses.map((expense) => (
               <div
                 key={expense.id}
-                className="bg-gray-800/80 backdrop-blur-sm border border-gray-700/50 rounded-2xl p-4 shadow-xl"
+                className="bg-gray-800/80 backdrop-blur-sm border border-gray-700/50 rounded-xl p-3 shadow-md"
               >
                 <div className="flex items-center justify-between mb-1">
                   <div className="flex-1">
-                    <p className="text-xs text-gray-500 mb-2">{formatDate(expense.date_time)}</p>
-                    <h4 className="font-medium text-white capitalize">{expense.description}</h4>
+                    <p className="text-[10px] text-gray-500 mb-1">{formatDate(expense.date_time)}</p>
+                    <h4 className="text-sm font-medium text-white capitalize">{expense.description}</h4>
                   </div>
 
                   <div className="text-right">
-                    <div className="font-semibold text-red-400">-{expense.formatted_amount}</div>
-                   <div className={`mt-1 px-1 py-[2px] rounded text-[10px] leading-tight font-medium border inline-block ${getTypeColor(expense.type)}`}>
+                    <div className="text-sm font-semibold text-red-400">-{expense.formatted_amount}</div>
+                    <div
+                      className={`mt-1 px-[6px] py-[1px] rounded text-[9px] leading-tight font-medium border inline-block ${getTypeColor(
+                        expense.type
+                      )}`}
+                    >
                       {expense.type}
                     </div>
                   </div>
@@ -305,6 +314,7 @@ export function ExpenseList() {
           )}
         </div>
       </div>
+
     </div>
   )
 }

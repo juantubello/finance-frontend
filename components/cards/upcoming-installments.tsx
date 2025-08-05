@@ -1,9 +1,9 @@
 "use client"
 
-import { Calendar } from "lucide-react"
+import { Calendar, TimerOff, DollarSign } from "lucide-react"
 import { useState, useEffect } from "react"
 import type { CardsSubscriptions } from "@/lib/types"
-import { getCardsSubscriptions, getCardSpecificExpenses } from "@/lib/api"
+import { getCardsSubscriptions, getCardSpecificExpenses, getCuotasAboutToExpire } from "@/lib/api"
 import { useDateFilter } from "@/lib/context/date-filter-context"
 import Image from "next/image"
 
@@ -11,6 +11,7 @@ export function AppsSubscriptions() {
   const { dateFilter } = useDateFilter()
   const [cardsSubscriptionsData, setSubscriptionsData] = useState<CardsSubscriptions[]>([])
   const [cardsSpecificExpensesData, setSpecificExpensesData] = useState<CardsSubscriptions[]>([])
+  const [cuotasToExpireData, setCuotasAboutToExpireData] = useState<CardsSubscriptions[]>([])
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
@@ -22,6 +23,10 @@ export function AppsSubscriptions() {
 
         const specificData = await getCardSpecificExpenses(dateFilter.year, dateFilter.month)
         setSpecificExpensesData(Array.isArray(specificData) ? specificData : [])
+
+        const cuotasToExpireData = await getCuotasAboutToExpire(dateFilter.year, dateFilter.month)
+        setCuotasAboutToExpireData(Array.isArray(specificData) ? cuotasToExpireData : [])
+
       } catch (error) {
         console.error("Error loading cards data:", error)
         setSubscriptionsData([])
@@ -55,6 +60,12 @@ export function AppsSubscriptions() {
 
   const usdSpecificFormatted = usdSpecificTotal.toLocaleString("es-AR", { minimumFractionDigits: 2 })
   const arsSpecificFormatted = arsSpecificTotal.toLocaleString("es-AR", { minimumFractionDigits: 2 })
+
+  const arsCuotasTotal = cuotasToExpireData
+    .filter((s) => !s.service.toLowerCase().includes("usd"))
+    .reduce((acc, s) => acc + s.total_amount, 0)
+
+  const arsCuotasFormatted = arsCuotasTotal.toLocaleString("es-AR", { minimumFractionDigits: 2 })
 
   return (
     <div className="px-6 pb-6">
@@ -117,7 +128,7 @@ export function AppsSubscriptions() {
       <div className="bg-gray-800/80 backdrop-blur-sm border border-gray-700/50 rounded-2xl p-4 shadow-xl">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
-            <Calendar className="w-5 h-5 text-blue-400" />
+            <DollarSign className="w-5 h-5 text-blue-400" />
             <h3 className="text-lg font-semibold text-white">Gastos específicos</h3>
           </div>
         </div>
@@ -164,6 +175,54 @@ export function AppsSubscriptions() {
           </div>
         )}
       </div>
+
+      {/* Espaciador visual */}
+      <div className="my-6" />
+
+      {/* Cuotas por expirar */}
+      <div className="bg-gray-800/80 backdrop-blur-sm border border-gray-700/50 rounded-2xl p-4 shadow-xl">
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-2">
+            <TimerOff className="w-5 h-5 text-blue-400" />
+            <h3 className="text-lg font-semibold text-white">Cuotas por expirar</h3>
+          </div>
+        </div>
+
+        <div className="flex justify-end gap-3 mb-3 text-sm">
+          <span className="text-blue-300">ARS: ${arsCuotasFormatted}</span>
+        </div>
+
+        {isLoading ? (
+          <div className="text-gray-400 text-sm text-center">Cargando cuotas por expirar...</div>
+        ) : cuotasToExpireData.length === 0 ? (
+          <div className="text-gray-500 text-sm text-center">No se encontraron cuotas para el mes.</div>
+        ) : (
+          <div
+            className="space-y-3 max-h-[500px] overflow-y-scroll pr-3 scrollbar-thin scrollbar-thumb-gray-500 scrollbar-track-transparent"
+            style={{
+              scrollbarGutter: "stable",
+              WebkitOverflowScrolling: "touch"
+            }}
+          >
+            {cuotasToExpireData.map((sub) => (
+              <div
+                key={sub.service}
+                className="flex items-center justify-between p-2 bg-gray-700/40 rounded-xl border border-gray-600/40 shadow"
+              >
+                <div className="flex items-center gap-3">
+                  <span className="text-sm text-white font-medium">{sub.service}</span>
+                </div>
+                <span
+                  className={`text-sm font-semibold ${sub.service.toLowerCase().includes("usd") ? "text-green-400" : "text-blue-300"}`}
+                >
+                  {sub.total_amount_formatted}
+                </span>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
     </div>
   )
 }

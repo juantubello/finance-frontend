@@ -68,29 +68,34 @@ export function IncomeList() {
         <h3 className="text-lg font-semibold text-white">Detalle de ingresos</h3>
       </div>
 
-      <div className="space-y-3">
+      <div className="space-y-2">
         {incomeData.incomes_details.map((income) => (
-              <div
-                key={income.id}
-                className="bg-gray-800/80 backdrop-blur-sm border border-gray-700/50 rounded-2xl p-4 shadow-xl"
-              >
-                <div className="flex items-center justify-between mb-1">
-                  <div className="flex-1">
-                    <p className="text-xs text-gray-500 mb-2">{formatDate(income.date_time)}</p>
-                    <h4 className="font-medium text-white capitalize">{income.description}</h4>
-                  </div>
+          <div
+            key={income.id}
+            className="bg-gray-800/80 backdrop-blur-sm border border-gray-700/50 rounded-xl p-3 shadow-md"
+          >
+            <div className="flex items-center justify-between mb-1">
+              <div className="flex-1">
+                <p className="text-[10px] text-gray-500 mb-1">{formatDate(income.date_time)}</p>
+                <h4 className="text-sm font-medium text-white capitalize">{income.description}</h4>
+              </div>
               <div className="text-right">
-                <div className="font-semibold text-green-400">+{income.formatted_amount}</div>
+                <div className="text-sm font-semibold text-green-400">+{income.formatted_amount}</div>
               </div>
             </div>
             <div className="flex items-center justify-between">
-              <span className={`px-2 py-1 rounded-full text-xs font-medium border ${getTypeColor(income.type)}`}>
+              <span
+                className={`px-[6px] py-[1px] rounded text-[9px] leading-tight font-medium border inline-block ${getTypeColor(
+                  income.type
+                )}`}
+              >
                 {income.type}
               </span>
             </div>
           </div>
         ))}
       </div>
+
     </div>
   )
 }
