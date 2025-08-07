@@ -44,6 +44,7 @@ export default function RootLayout({
         <link rel="icon" href="/favicon.ico" />
         <link rel="apple-touch-icon" href="/icon-192x192.png" />
         <link rel="apple-touch-startup-image" href="/icon-512x512.png" />
+        <link rel="manifest" href="/manifest.json" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
         <meta name="mobile-web-app-capable" content="yes" />
