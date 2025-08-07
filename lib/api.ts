@@ -9,6 +9,7 @@ const cardsExpensesCache: Record<string, CardData[]> = {}
 const cardsSubscriptionsCache: Record<string, CardsSubscriptions[]> = {}
 const cardsSpecificExpensesCache: Record<string, CardsSubscriptions[]> = {}
 const cardsCuotasCache: Record<string, CardsSubscriptions[]> = {}
+const expensesCache: Record<string, ExpensesData> = {}
 
 // API Response Types
 export interface ExpensesSummaryResponse {
@@ -166,19 +167,32 @@ export async function getRecentExpenses(year: number, month: number, limit = 3) 
   }
 }
 
-export async function getExpenses(year: number, month: number): Promise<ExpensesData> {
+export async function getExpenses(year: number, month: number, useCache: boolean): Promise<ExpensesData> {
   if (!USE_API) {
     return expensesData
   }
 
   try {
+
     const { year: yearStr, month: monthStr } = formatDateParams(year, month)
+    const cacheKey = `${yearStr}-${monthStr}`
+
+    // Return cached value
+    if (expensesCache[cacheKey] && useCache) {
+      return expensesCache[cacheKey]
+    }
+
     const response = await fetch(`${API_BASE_URL}/expenses?year=${yearStr}&month=${monthStr}`)
 
     if (!response.ok) throw new Error("Failed to fetch expenses")
 
     const data: ExpensesData = await response.json()
+
+    // Save response as cache
+    expensesCache[cacheKey] = data
+
     return data
+
   } catch (error) {
     console.error("Error fetching expenses:", error)
     return expensesData // Fallback to hardcoded data
@@ -198,6 +212,7 @@ export async function getIncomes(year: number, month: number): Promise<IncomeDat
 
     const data: IncomeData = await response.json()
     return data
+
   } catch (error) {
     console.error("Error fetching incomes:", error)
     return incomeData // Fallback to hardcoded data

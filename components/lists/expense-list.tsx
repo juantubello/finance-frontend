@@ -35,7 +35,7 @@ export function ExpenseList() {
   const fetchData = async () => {
     setIsLoading(true)
     try {
-      const data = await getExpenses(dateFilter.year, dateFilter.month)
+      const data = await getExpenses(dateFilter.year, dateFilter.month, true)
       setExpensesData(data)
       const summary = await getExpensesSummary(dateFilter.year, dateFilter.month)
       setSummaryData(summary)
@@ -48,7 +48,7 @@ export function ExpenseList() {
 
   const refreshData = async () => {
     try {
-      const data = await getExpenses(dateFilter.year, dateFilter.month)
+      const data = await getExpenses(dateFilter.year, dateFilter.month, false)
       setExpensesData(data)
       const summary = await getExpensesSummary(dateFilter.year, dateFilter.month)
       setSummaryData(summary)
