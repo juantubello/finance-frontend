@@ -5,6 +5,10 @@ import type { ExpensesData, IncomeData, CardData, CategorySpending, ExpenseItem,
 
 const USE_API = process.env.NEXT_PUBLIC_USE_API === "1"
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8080"
+const cardsExpensesCache: Record<string, CardData[]> = {}
+const cardsSubscriptionsCache: Record<string, CardsSubscriptions[]> = {}
+const cardsSpecificExpensesCache: Record<string, CardsSubscriptions[]> = {}
+const cardsCuotasCache: Record<string, CardsSubscriptions[]> = {}
 
 // API Response Types
 export interface ExpensesSummaryResponse {
@@ -236,7 +240,7 @@ export async function syncResumes(): Promise<SyncResumeResponse> {
     }
 
     if (!response.ok) {
-        throw new Error(`Error ${response.status} en servidor`)
+      throw new Error(`Error ${response.status} en servidor`)
     } else {
       syncResumeResponse.error = ""
       syncResumeResponse.processed = true
@@ -318,6 +322,14 @@ export async function getCardsExpenses(
 
   try {
     const { year: yearStr, month: monthStr } = formatDateParams(year, month)
+
+    const cacheKey = `${yearStr}-${monthStr}-${cardType}-${holder}`
+
+    // Return cached value
+    if (cardsExpensesCache[cacheKey]) {
+      return cardsExpensesCache[cacheKey]
+    }
+
     const response = await fetch(
       `${API_BASE_URL}/cards/expenses?year=${yearStr}&month=${monthStr}&card_type=${cardType}&holder=${holder}`,
     )
@@ -325,7 +337,12 @@ export async function getCardsExpenses(
     if (!response.ok) throw new Error("Failed to fetch cards expenses")
 
     const data: CardData[] = await response.json()
+
+    // Save response as cache
+    cardsExpensesCache[cacheKey] = data
+
     return data
+
   } catch (error) {
     console.error("Error fetching cards expenses:", error)
     return cardsData // Fallback to hardcoded data
@@ -342,6 +359,14 @@ export async function getCardsSubscriptions(
 
   try {
     const { year: yearStr, month: monthStr } = formatDateParams(year, month)
+
+    const cacheKey = `${yearStr}-${monthStr}`
+
+    // Return cached value
+    if (cardsSubscriptionsCache[cacheKey]) {
+      return cardsSubscriptionsCache[cacheKey]
+    }
+
     const response = await fetch(
       `${API_BASE_URL}/cards/subscriptions?year=${yearStr}&month=${monthStr}`,
     )
@@ -349,7 +374,12 @@ export async function getCardsSubscriptions(
     if (!response.ok) throw new Error("Failed to fetch cards expenses")
 
     const data: CardsSubscriptions[] = await response.json()
+
+    // Save response as cache
+    cardsSubscriptionsCache[cacheKey] = data
+
     return data
+
   } catch (error) {
     console.error("Error fetching cards expenses:", error)
     return subscriptionData // Fallback to hardcoded data
@@ -366,6 +396,14 @@ export async function getCardSpecificExpenses(
 
   try {
     const { year: yearStr, month: monthStr } = formatDateParams(year, month)
+
+    const cacheKey = `${yearStr}-${monthStr}`
+
+    // Return cached value
+    if (cardsSpecificExpensesCache[cacheKey]) {
+      return cardsSpecificExpensesCache[cacheKey]
+    }
+
     const response = await fetch(
       `${API_BASE_URL}/cards/specificexpenses?year=${yearStr}&month=${monthStr}`,
     )
@@ -373,7 +411,12 @@ export async function getCardSpecificExpenses(
     if (!response.ok) throw new Error("Failed to fetch cards expenses")
 
     const data: CardsSubscriptions[] = await response.json()
+
+    // Save response as cache
+    cardsSpecificExpensesCache[cacheKey] = data
+
     return data
+
   } catch (error) {
     console.error("Error fetching cards expenses:", error)
     return subscriptionData // Fallback to hardcoded data
@@ -390,6 +433,14 @@ export async function getCuotasAboutToExpire(
 
   try {
     const { year: yearStr, month: monthStr } = formatDateParams(year, month)
+
+    const cacheKey = `${yearStr}-${monthStr}`
+
+    // Return cached value
+    if (cardsCuotasCache[cacheKey]) {
+      return cardsCuotasCache[cacheKey]
+    }
+
     const response = await fetch(
       `${API_BASE_URL}/cards/coutasexpire?year=${yearStr}&month=${monthStr}`,
     )
@@ -397,7 +448,12 @@ export async function getCuotasAboutToExpire(
     if (!response.ok) throw new Error("Failed to fetch cards expenses")
 
     const data: CardsSubscriptions[] = await response.json()
+
+    // Save response as cache
+    cardsCuotasCache[cacheKey] = data
+
     return data
+
   } catch (error) {
     console.error("Error fetching cards expenses:", error)
     return subscriptionData // Fallback to hardcoded data
