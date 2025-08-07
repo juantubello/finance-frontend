@@ -25,8 +25,8 @@ export function RecentExpensesTable() {
     const fetchData = async () => {
       setIsLoading(true)
       try {
-        const data = await getRecentExpenses(dateFilter.year, dateFilter.month, 3)
-        setRecentExpenses(data)
+       // const data = await getRecentExpenses(dateFilter.year, dateFilter.month, 3)
+        //setRecentExpenses(data)
       } catch (error) {
         console.error("Error loading recent expenses:", error)
       } finally {
@@ -34,7 +34,7 @@ export function RecentExpensesTable() {
       }
     }
 
-    fetchData()
+   // fetchData()
   }, [dateFilter])
 
   const formatDate = (dateTime: string) => {
@@ -66,56 +66,59 @@ export function RecentExpensesTable() {
     return categoryColors[type] || "bg-gray-600/20 text-gray-300 border-gray-500/30"
   }
 
-  if (isLoading) {
-    return (
-      <div className="px-6 pb-6">
-        <h3 className="text-lg font-semibold mb-4 text-white">Gastos recientes</h3>
-        <div className="bg-gray-800/80 backdrop-blur-sm border border-gray-700/50 rounded-2xl p-6">
-          <div className="flex items-center justify-center h-32">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-400"></div>
-          </div>
-        </div>
-      </div>
-    )
-  }
+  // if (isLoading) {
+  //   return (
+  //     <div className="px-6 pb-6">
+  //       <h3 className="text-lg font-semibold mb-4 text-white">Gastos recientes</h3>
+  //       <div className="bg-gray-800/80 backdrop-blur-sm border border-gray-700/50 rounded-2xl p-6">
+  //         <div className="flex items-center justify-center h-32">
+  //           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-400"></div>
+  //         </div>
+  //       </div>
+  //     </div>
+  //   )
+  // }
 
   return (
-    <div className="px-6 pb-6">
-      <h3 className="text-lg font-semibold mb-4 text-white">Gastos recientes</h3>
+<div className="px-6 pb-6">
+  {/* <h3 className="text-base font-semibold mb-3 text-white">Gastos recientes</h3>
 
-      <div className="bg-gray-800/80 backdrop-blur-sm border border-gray-700/50 rounded-2xl overflow-hidden shadow-xl">
-        {recentExpenses.length === 0 ? (
-          <div className="p-8 text-center text-gray-400">
-            <Receipt className="w-8 h-8 mx-auto mb-2 opacity-50" />
-            <p>No recent expenses found.</p>
-          </div>
-        ) : (
-          recentExpenses.map((expense, index) => (
-            <div
-              key={expense.id}
-              className={`flex items-center justify-between p-4 ${
-                index !== recentExpenses.length - 1 ? "border-b border-gray-700/30" : ""
-              }`}
-            >
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-red-600/20 rounded-lg flex items-center justify-center">
-                  <Receipt className="w-5 h-5 text-red-400" />
-                </div>
-                <div>
-                  <div className="font-medium text-white capitalize">{expense.description}</div>
-                  <div className="text-sm text-gray-400">{formatDate(expense.date_time)}</div>
-                </div>
-              </div>
-              <div className="text-right">
-                <div className="font-semibold text-red-400">-{expense.formatted_amount}</div>
-                <span className={`px-2 py-1 rounded-full text-xs font-medium border ${getTypeColor(expense.type)}`}>
-                  {expense.type}
-                </span>
-              </div>
-            </div>
-          ))
-        )}
+  <div className="bg-gray-800/80 backdrop-blur-sm border border-gray-700/50 rounded-2xl overflow-hidden shadow-xl">
+    {recentExpenses.length === 0 ? (
+      <div className="p-6 text-center text-gray-400 text-sm">
+        <Receipt className="w-6 h-6 mx-auto mb-1 opacity-50" />
+        <p>No recent expenses found.</p>
       </div>
-    </div>
+    ) : (
+      recentExpenses.map((expense, index) => (
+        <div
+          key={expense.id}
+          className={`flex items-center justify-between px-3 py-2 ${
+            index !== recentExpenses.length - 1 ? "border-b border-gray-700/30" : ""
+          }`}
+        >
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 bg-red-600/20 rounded-lg flex items-center justify-center">
+              <Receipt className="w-4 h-4 text-red-400" />
+            </div>
+            <div className="leading-tight">
+              <div className="font-medium text-white text-sm capitalize truncate max-w-[150px]">
+                {expense.description}
+              </div>
+              <div className="text-xs text-gray-400">{formatDate(expense.date_time)}</div>
+            </div>
+          </div>
+          <div className="text-right">
+            <div className="font-semibold text-red-400 text-sm">-{expense.formatted_amount}</div>
+            <span className={`px-1.5 py-0.5 rounded-full text-xs font-medium border ${getTypeColor(expense.type)}`}>
+              {expense.type}
+            </span>
+          </div>
+        </div>
+      ))
+    )}
+  </div> */}
+</div>
+
   )
 }

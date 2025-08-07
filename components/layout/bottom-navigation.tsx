@@ -9,7 +9,7 @@ const navItems = [
   { href: "/income", icon: TrendingUp, label: "Ingresos" },
   { href: "/cards", icon: CreditCard, label: "Tarjetas" },
     { href: "/analytics", icon: PieChart, label: "Analiticas" },
-  { href: "/sync", icon: RefreshCw, label: "Sincronizacion" },
+  { href: "/sync", icon: RefreshCw, label: "Sync" },
 ]
 
 export function BottomNavigation() {

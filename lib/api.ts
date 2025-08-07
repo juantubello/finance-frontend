@@ -51,8 +51,6 @@ export interface BalanceResponse {
   formatted_monthly_cards_usd: string
 }
 
-
-
 export interface SyncExpensesResponse {
   rows_deleted: number
   deleted_rows_detail: ExpenseItem[]
