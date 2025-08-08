@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { ArrowLeft, Search, User } from "lucide-react"
+import { ArrowLeft, Search } from "lucide-react"
 import { useRouter } from "next/navigation"
 import type { CardData, CardHolder } from "@/lib/types"
 
@@ -16,6 +16,7 @@ interface HolderFilters {
 export function CardDetailView({ card }: CardDetailViewProps) {
   const router = useRouter()
   const [holderFilters, setHolderFilters] = useState<HolderFilters>({})
+  const [showSearch, setShowSearch] = useState<{ [holder: string]: boolean }>({})
 
   const getCardGradient = (cardType: string) => {
     switch (cardType.toLowerCase()) {
@@ -81,6 +82,14 @@ export function CardDetailView({ card }: CardDetailViewProps) {
     }
   }
 
+  const toggleSearch = (holder: string) => {
+    setShowSearch(prev => ({
+      ...prev,
+      [holder]: !prev[holder],
+    }))
+  }
+
+
   return (
     <div className="max-w-md mx-auto min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black">
       {/* Header */}
@@ -136,59 +145,57 @@ export function CardDetailView({ card }: CardDetailViewProps) {
                 key={holder.holder}
                 className="bg-gray-800/80 backdrop-blur-sm border border-gray-700/50 rounded-xl overflow-hidden shadow-md"
               >
-                {/* Holder Header */}
-                <div className="p-3 border-b border-gray-700/30 bg-gray-700/30">
-                  <div className="flex items-center gap-2 mb-2">
-                    <User className="w-4 h-4 text-blue-400" />
-                    <h3 className="font-semibold text-sm text-white">{holder.holder}</h3>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-3 text-xs">
-                    <div>
-                      <span className="text-gray-400">Total ARS:</span>
-                      <div className="font-medium text-white">{holder.formatted_total_ars}</div>
-                    </div>
-                    <div>
-                      <span className="text-gray-400">Total USD:</span>
-                      <div className="font-medium text-white">{holder.formatted_total_usd}</div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Search Filter */}
-                <div className="p-3 border-b border-gray-700/30 bg-gray-700/20">
-                  <div className="relative">
-                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-3.5 h-3.5 text-gray-400" />
-                    <input
-                      type="text"
-                      placeholder={`Buscar en gastos de ${holder.holder}`}
-                      value={holderFilters[holder.holder] || ""}
-                      onChange={(e) => updateHolderFilter(holder.holder, e.target.value)}
-                      className="w-full pl-9 pr-3 py-[6px] text-sm bg-gray-700 border border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-white placeholder-gray-400"
-                    />
-                  </div>
-
-                  <div className="mt-1.5 flex items-center justify-between text-xs text-gray-400">
-                    <span>
-                      {filteredExpenses.length} de {holder.Expenses.length} gastos
+                {/* Search Filter Header */}
+                <div className="flex items-center justify-between px-3 py-2 border-b border-gray-700/30 bg-gray-700/20">
+                  <div className="flex items-center gap-x-3 text-xs">
+                    <span className="text-sm font-semibold text-gray-200">
+                      {holder.holder === "Cami" && "👱🏻‍♀️ "}
+                      {holder.holder === "Juan" && "👦🏽 "}
+                      {holder.holder}
                     </span>
-                  </div>
-
-                  <div className="mt-2 grid grid-cols-2 gap-2 text-xs">
-                    <div>
+                    <div className="flex items-center gap-x-2">
                       <span className="text-gray-400">ARS:</span>
-                      <span className="font-medium text-blue-400 ml-1">
+                      <span className="font-medium text-blue-400">
                         ${nonUsdTotal.toLocaleString("es-AR", { minimumFractionDigits: 2 })}
                       </span>
                     </div>
-                    <div>
+                    <div className="flex items-center gap-x-2">
                       <span className="text-gray-400">USD:</span>
-                      <span className="font-medium text-green-400 ml-1">
+                      <span className="font-medium text-green-400">
                         ${usdTotal.toLocaleString("es-AR", { minimumFractionDigits: 2 })}
                       </span>
                     </div>
                   </div>
+                  <button
+                    onClick={() => toggleSearch(holder.holder)}
+                    className="flex items-center gap-1 text-xs text-gray-400 hover:text-white transition"
+                  >
+                    <Search className="w-4 h-4" />
+                    <span>{showSearch[holder.holder] ? "Ocultar" : "Buscar"}</span>
+                  </button>
                 </div>
+
+                {/* Search Filter Body */}
+                {showSearch[holder.holder] && (
+                  <div className="px-3 py-2 border-b border-gray-700/30 bg-gray-700/20">
+                    <div className="relative mb-1">
+                      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-3.5 h-3.5 text-gray-400" />
+                      <input
+                        type="text"
+                        placeholder={`Buscar en gastos de ${holder.holder}`}
+                        value={holderFilters[holder.holder] || ""}
+                        onChange={(e) => updateHolderFilter(holder.holder, e.target.value)}
+                        className="w-full pl-9 pr-3 py-[6px] text-sm bg-gray-700 border border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-white placeholder-gray-400"
+                      />
+                    </div>
+
+                    <div className="flex items-center justify-between text-xs text-gray-400">
+                      <span>
+                        {filteredExpenses.length} de {holder.Expenses.length} gastos
+                      </span>
+                    </div>
+                  </div>
+                )}
 
                 {/* Expenses Table */}
                 <div className="max-h-96 overflow-y-auto">
