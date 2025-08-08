@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { Menu, Info, X } from "lucide-react"
 import { GlobalDateFilter } from "./global-date-filter"
+import { APP_VERSION, APP_CREATOR } from "@/constants/version"
 
 interface MobileHeaderProps {
   title: string
@@ -23,15 +24,30 @@ export function MobileHeader({ title, showMenu = true, showInfo = true }: Mobile
         ) : (
           <div className="w-6" />
         )}
+
         <h1 className="text-lg font-semibold text-white">{title}</h1>
-        {showInfo ? <Info className="w-6 h-6 text-white" /> : <div className="w-6" />}
+
+        {showInfo ? (
+          <button
+            onClick={() => alert(`Versión: ${APP_VERSION}\nCreado por: ${APP_CREATOR}`)}
+            className="p-1 rounded-full hover:bg-white/10 transition"
+            aria-label="Mostrar versión de la app"
+          >
+            <Info className="w-6 h-6 text-white" />
+          </button>
+        ) : (
+          <div className="w-6" />
+        )}
       </div>
 
       {/* Slide-out Menu */}
       {isMenuOpen && (
         <>
           {/* Backdrop */}
-          <div className="fixed inset-0 bg-black bg-opacity-50 z-40" onClick={() => setIsMenuOpen(false)} />
+          <div
+            className="fixed inset-0 bg-black bg-opacity-50 z-40"
+            onClick={() => setIsMenuOpen(false)}
+          />
 
           {/* Menu Panel */}
           <div className="fixed top-0 left-0 h-full w-80 bg-gradient-to-br from-gray-900 to-black shadow-lg z-50 transform transition-transform duration-300 border-r border-white/10">
