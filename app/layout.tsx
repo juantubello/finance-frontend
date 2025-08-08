@@ -4,6 +4,7 @@ import { Inter } from "next/font/google"
 import "./globals.css"
 import { BottomNavigation } from "@/components/layout/bottom-navigation"
 import { DateFilterProvider } from "@/lib/context/date-filter-context"
+import ServiceWorkerWrapper from "@/components/ServiceWorkerWrapper" // 👈 Agregá esta línea
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -54,6 +55,7 @@ export default function RootLayout({
           <div className="min-h-screen pb-20">{children}</div>
           <BottomNavigation />
         </DateFilterProvider>
+          <ServiceWorkerWrapper /> 
       </body>
     </html>
   )

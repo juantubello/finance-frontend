@@ -13,34 +13,46 @@ const urlsToCache = [
 
 // Install event
 self.addEventListener("install", (event) => {
+  console.log("[Service Worker] Instalando...")
+
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(urlsToCache)
-    }),
+      console.log("[Service Worker] Intentando cachear:", urlsToCache)
+
+      return Promise.allSettled(
+        urlsToCache.map((url) =>
+          cache.add(url).catch((err) => {
+            console.warn(`[Service Worker] ❌ Falló al cachear ${url}:`, err)
+          })
+        )
+      )
+    })
   )
 })
 
 // Fetch event
 self.addEventListener("fetch", (event) => {
+  console.log("[Service Worker] Fetching", event.request.url)
   event.respondWith(
     caches.match(event.request).then((response) => {
-      // Return cached version or fetch from network
       return response || fetch(event.request)
-    }),
+    })
   )
 })
 
 // Activate event
 self.addEventListener("activate", (event) => {
+  console.log("[Service Worker] Activando...")
   event.waitUntil(
     caches.keys().then((cacheNames) => {
       return Promise.all(
         cacheNames.map((cacheName) => {
           if (cacheName !== CACHE_NAME) {
+            console.log("[Service Worker] Borrando cache antigua:", cacheName)
             return caches.delete(cacheName)
           }
-        }),
+        })
       )
-    }),
+    })
   )
 })
