@@ -14,7 +14,7 @@ export function ExpenseList() {
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedCategories, setSelectedCategories] = useState<string[]>([])
   const [showCategoryModal, setShowCategoryModal] = useState(false)
-  const [showFilters, setShowFilters] = useState(true)
+  const [showFilters, setShowFilters] = useState(false)
   const [summaryData, setSummaryData] = useState<{
     total: number
     formatted_total: string
@@ -22,12 +22,12 @@ export function ExpenseList() {
     types_summary: CategorySpending[]
   } | null>(null)
 
-  // Pull to refresh
   const [isRefreshing, setIsRefreshing] = useState(false)
   const [pullDistance, setPullDistance] = useState(0)
   const containerRef = useRef<HTMLDivElement>(null)
   let startY = 0
 
+  // Cargar datos
   useEffect(() => {
     fetchData()
   }, [dateFilter])
@@ -57,23 +57,37 @@ export function ExpenseList() {
     }
   }
 
+  // Ref para la cabecera de "Gastos efectivo/débito"
+  const headerRef = useRef<HTMLDivElement>(null)
+
   function handleTouchStart(e: React.TouchEvent) {
-    if (window.scrollY === 0) {
-      startY = e.touches[0].clientY
+    if (!containerRef.current || !headerRef.current) return
+
+    const touchY = e.touches[0].clientY
+    const headerTop = headerRef.current.getBoundingClientRect().top
+
+    // Permitimos el pull solo si el toque empieza en o por encima del header
+    if (touchY <= headerTop + headerRef.current.offsetHeight) {
+      startY = touchY
     }
   }
 
- function handleTouchMove(e: React.TouchEvent) {
-  const currentY = e.touches[0].clientY
-  const distance = currentY - startY
 
-  const threshold = 15 // 👈 ignora toques leves
+  // Ajuste en handleTouchMove para asegurarse de que solo se ejecute en el área correcta
+  function handleTouchMove(e: React.TouchEvent) {
+    const currentY = e.touches[0].clientY
+    const distance = currentY - startY
 
-  if (window.scrollY === 0 && distance > threshold) {
-    e.preventDefault()
-    setPullDistance(distance > 80 ? 80 : distance)
+    const threshold = 15 // Ignora toques leves
+
+    // Verifica que el gesto de deslizamiento esté dentro de la cabecera
+    if (headerRef.current && e.touches[0].clientY <= headerRef.current.getBoundingClientRect().bottom) {
+      if (containerRef.current && containerRef.current.scrollTop === 0 && distance > threshold) {
+        e.preventDefault()
+        setPullDistance(distance > 80 ? 80 : distance)
+      }
+    }
   }
-}
 
   async function handleTouchEnd() {
     if (pullDistance > 50) {
@@ -166,50 +180,59 @@ export function ExpenseList() {
   return (
     <div
       ref={containerRef}
-      className="px-6 pb-6" // 👈 agregamos pt-20
+      className="px-6 pb-6 overflow-y-auto h-[100dvh]"
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
     >
       {pullDistance > 0 && (
-  <div
-    className="fixed top-0 left-0 right-0 z-50 flex flex-col items-center justify-end"
-    style={{
-      height: `${pullDistance}px`,
-      transition: "height 0.2s ease",
-    }}
-  >
-    {pullDistance > 70 ? (
-      <>
-        <RefreshCcw className="h-6 w-6 text-blue-400 animate-spin mb-2" />
-        <span className="text-sm text-gray-300">
-          {isRefreshing
-            ? "Actualizando..."
-            : pullDistance > 50
-            ? "Soltá para refrescar"
-            : "Desliza para refrescar"}
+        <div
+          className="fixed top-0 left-0 right-0 z-50 flex flex-col items-center justify-end"
+          style={{
+            height: `${pullDistance}px`,
+            transition: "height 0.2s ease",
+          }}
+        >
+          {pullDistance > 70 ? (
+            <>
+              <RefreshCcw className="h-6 w-6 text-blue-400 animate-spin mb-2" />
+              <span className="text-sm text-gray-300">
+                {isRefreshing
+                  ? "Actualizando..."
+                  : pullDistance > 50
+                    ? "Soltá para refrescar"
+                    : "Desliza para refrescar"}
+              </span>
+            </>
+          ) : (
+            <div className="h-[24px]" />
+          )}
+        </div>
+      )}
+
+      {/* Resumen de gastos */}
+      <div
+        ref={headerRef}
+        className="relative bg-gradient-to-br from-red-600/20 to-red-800/20 backdrop-blur-sm border border-red-500/20 rounded-2xl p-4 mb-6 w-full"
+      >
+        <span className="absolute top-2 right-3 text-[9px] text-red-300/50 italic">
+          ⬇️ Desliza desde acá para actualizar
         </span>
-      </>
-    ) : (
-      <div className="h-[24px]" />
-    )}
-  </div>
-)}
 
-
-      {/* Resumen total */}
-      <div className="bg-gradient-to-br from-red-600/20 to-red-800/20 backdrop-blur-sm border border-red-500/20 rounded-2xl p-4 mb-6">
         <h3 className="text-sm font-medium text-red-300 mb-1">Gastos efectivo/débito</h3>
         <div className="text-2xl font-bold text-white">{summaryData?.formatted_total}</div>
         <p className="text-sm text-red-200 mt-1">{expensesData.Expenses.length} gastos</p>
       </div>
 
       {/* Filtros */}
-      <div className="bg-gray-800/80 backdrop-blur-sm border border-gray-700/50 rounded-2xl p-4 mb-4 shadow-xl">
+      <div className="bg-gray-800/80 backdrop-blur-sm border border-gray-700/50 rounded-2xl p-4 mb-4 shadow-xl w-full">
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
             <Filter className="w-5 h-5 text-blue-400" />
             <h3 className="font-semibold text-white">Filtros</h3>
+            <span className="text-[12px] text-gray-400">
+              ( {filteredExpenses.length} de {expensesData.Expenses.length} gastos )
+            </span>
           </div>
           <button
             onClick={() => setShowFilters(!showFilters)}
@@ -262,12 +285,7 @@ export function ExpenseList() {
 
             <div className="flex items-center justify-between text-[13px]">
               <div className="flex items-center gap-3">
-                <span className="text-gray-400">
-                  {filteredExpenses.length} de {expensesData.Expenses.length} gastos
-                </span>
-                <div className="text-blue-400 font-medium">
-                  Total filtrado: ${filteredTotal.toLocaleString("es-AR", { minimumFractionDigits: 2 })}
-                </div>
+
               </div>
               {(searchTerm || selectedCategories.length > 0) && (
                 <button
@@ -320,8 +338,8 @@ export function ExpenseList() {
                     key={category}
                     onClick={() => toggleCategory(category)}
                     className={`w-full text-left px-3 py-2 hover:bg-gray-700 transition-colors border-b border-gray-700/50 last:border-b-0 flex items-center justify-between ${selectedCategories.includes(category)
-                        ? "bg-blue-600/20 text-blue-300"
-                        : "text-white"
+                      ? "bg-blue-600/20 text-blue-300"
+                      : "text-white"
                       }`}
                   >
                     <span className="text-sm">{category}</span>
@@ -332,40 +350,53 @@ export function ExpenseList() {
           </div>
         </div>
       )}
-
-      {/* Lista de gastos */}
-      <div className="space-y-2">
-        {filteredExpenses.length === 0 ? (
-          <div className="bg-gray-800/80 backdrop-blur-sm border border-gray-700/50 rounded-2xl p-8 text-center text-gray-400">
-            <Search className="w-8 h-8 mx-auto mb-2 opacity-50" />
-            <p>No se encontraron gastos para los filtros seleccionados.</p>
+      {/* Contenedor principal de la lista de gastos */}
+      <div className="-mx-6 px-6 sm:px-6">
+        {/* Expenses List */}
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-lg font-semibold text-white">Detalle de gastos</h3>
+          <div className="text-[14px] text-gray-400">
+            Total listado: ${filteredTotal.toLocaleString("es-AR", { minimumFractionDigits: 2 })}
           </div>
-        ) : (
-          filteredExpenses.map((expense) => (
-            <div
-              key={expense.id}
-              className="bg-gray-800/80 backdrop-blur-sm border border-gray-700/50 rounded-xl p-3 shadow-md"
-            >
-              <div className="flex items-center justify-between mb-1">
-                <div className="flex-1">
-                  <p className="text-[10px] text-gray-500 mb-1">{formatDate(expense.date_time)}</p>
-                  <h4 className="text-sm font-medium text-white capitalize">{expense.description}</h4>
-                </div>
-                <div className="text-right">
-                  <div className="text-sm font-semibold text-red-400">-{expense.formatted_amount}</div>
-                  <div
-                    className={`mt-1 px-[6px] py-[1px] rounded text-[9px] leading-tight font-medium border inline-block ${getTypeColor(
-                      expense.type
-                    )}`}
-                  >
-                    {expense.type}
+        </div>
+
+        <div className="max-h-[600px] overflow-y-auto pr-2 w-full" style={{ scrollbarGutter: "stable" }}>
+          <div className="space-y-2">
+            {filteredExpenses.length === 0 ? (
+              <div className="bg-gray-800/80 backdrop-blur-sm border border-gray-700/50 rounded-2xl p-8 text-center text-gray-400">
+                <Search className="w-8 h-8 mx-auto mb-2 opacity-50" />
+                <p>No se encontraron gastos para los filtros seleccionados.</p>
+              </div>
+            ) : (
+              filteredExpenses.map((expense) => (
+                <div
+                  key={expense.id}
+                  className="bg-gray-800/80 backdrop-blur-sm border border-gray-700/50 rounded-xl p-3 shadow-md"
+                >
+                  <div className="flex items-center justify-between mb-1">
+                    <div className="flex-1">
+                      <p className="text-[10px] text-gray-500 mb-1">{formatDate(expense.date_time)}</p>
+                      <h4 className="text-sm font-medium text-white capitalize">{expense.description}</h4>
+                    </div>
+
+                    <div className="text-right">
+                      <div className="text-sm font-semibold text-red-400">-{expense.formatted_amount}</div>
+                      <div
+                        className={`mt-1 px-[6px] py-[1px] rounded text-[9px] leading-tight font-medium border inline-block ${getTypeColor(
+                          expense.type
+                        )}`}
+                      >
+                        {expense.type}
+                      </div>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </div>
-          ))
-        )}
+              ))
+            )}
+          </div>
+        </div>
       </div>
     </div>
+
   )
 }
