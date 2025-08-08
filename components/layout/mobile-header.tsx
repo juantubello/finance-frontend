@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { Menu, Info, X } from "lucide-react"
 import { GlobalDateFilter } from "./global-date-filter"
-import { APP_VERSION, APP_CREATOR } from "@/constants/version"
+import { APP_VERSION, APP_CREATOR, APP_SUPERVISOR } from "@/constants/version"
 
 interface MobileHeaderProps {
   title: string
@@ -29,7 +29,7 @@ export function MobileHeader({ title, showMenu = true, showInfo = true }: Mobile
 
         {showInfo ? (
           <button
-            onClick={() => alert(`Versión: ${APP_VERSION}\nCreado por: ${APP_CREATOR}`)}
+            onClick={() => alert(`Versión: ${APP_VERSION}\nCreado por: ${APP_CREATOR}\nSupervisado por: ${APP_SUPERVISOR}`)}
             className="p-1 rounded-full hover:bg-white/10 transition"
             aria-label="Mostrar versión de la app"
           >
