@@ -17,6 +17,7 @@ import {
 import type { ExpenseItem, IncomeItem } from "@/lib/types"
 
 import { syncExpenses, syncIncomes, syncResumes } from "@/lib/api"
+import { useExpenseRefreshStore } from "@/globalstores/expense-refresh-store"
 
 interface SyncNotification {
   id: string
@@ -92,6 +93,7 @@ export function SyncSection() {
   const [selectedSync, setSelectedSync] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState<string | null>(null)
   const [notifications, setNotifications] = useState<SyncNotification[]>([])
+  const setShouldRefreshExpenses = useExpenseRefreshStore(state => state.setShouldRefreshExpenses)
 
   const addNotification = (type: "success" | "error" | "info", message: string) => {
     const id = Date.now().toString()
@@ -151,9 +153,11 @@ export function SyncSection() {
       if (success) {
         let deleted, added
         if (syncExpensesResponse && syncExpensesResponse?.rows_deleted > 0) {
+          setShouldRefreshExpenses(true)
           deleted = syncExpensesResponse.rows_deleted
         }
         if (syncExpensesResponse && syncExpensesResponse?.inserted_rows > 0) {
+          setShouldRefreshExpenses(true)
           added = syncExpensesResponse.inserted_rows
         }
         if (deleted && added) {

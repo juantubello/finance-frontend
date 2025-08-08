@@ -175,8 +175,12 @@ export async function getExpenses(year: number, month: number, useCache: boolean
     const { year: yearStr, month: monthStr } = formatDateParams(year, month)
     const cacheKey = `${yearStr}-${monthStr}`
 
+// 🚩 Verificamos si hay que evitar la caché
+    const { useExpenseRefreshStore } = await import("@/globalstores/expense-refresh-store")
+    const { shouldRefreshExpenses, setShouldRefreshExpenses } = useExpenseRefreshStore.getState()
+
     // Return cached value
-    if (expensesCache[cacheKey] && useCache) {
+    if (useCache && expensesCache[cacheKey] && !shouldRefreshExpenses) {
       return expensesCache[cacheKey]
     }
 
@@ -188,6 +192,11 @@ export async function getExpenses(year: number, month: number, useCache: boolean
 
     // Save response as cache
     expensesCache[cacheKey] = data
+
+    //Resetear flag
+    if (shouldRefreshExpenses) {
+      setShouldRefreshExpenses(false)
+    }
 
     return data
 
