@@ -1,5 +1,5 @@
 "use client"
-import { Home, CreditCard, TrendingUp, PieChart, RefreshCw } from "lucide-react"
+import { Home, CreditCard, TrendingUp, PieChart, RefreshCw, PiggyBank } from "lucide-react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 
@@ -8,7 +8,8 @@ const navItems = [
   { href: "/expenses", icon: CreditCard, label: "Gastos" },
   { href: "/income", icon: TrendingUp, label: "Ingresos" },
   { href: "/cards", icon: CreditCard, label: "Tarjetas" },
-    { href: "/analytics", icon: PieChart, label: "Analiticas" },
+  { href: "/analytics", icon: PieChart, label: "Analiticas" },
+  { href: "/savings", icon: PiggyBank, label: "Ahorros" },
   { href: "/sync", icon: RefreshCw, label: "Sync" },
 ]
 
@@ -26,9 +27,8 @@ export function BottomNavigation() {
             <Link
               key={item.href}
               href={item.href}
-              className={`flex flex-col items-center py-2 px-2 rounded-lg transition-colors ${
-                isActive ? "text-blue-400 bg-blue-500/20" : "text-gray-400 hover:text-white"
-              }`}
+              className={`flex flex-col items-center py-2 px-2 rounded-lg transition-colors ${isActive ? "text-blue-400 bg-blue-500/20" : "text-gray-400 hover:text-white"
+                }`}
             >
               <IconComponent className="w-4 h-4 mb-1" />
               <span className="text-xs font-medium">{item.label}</span>

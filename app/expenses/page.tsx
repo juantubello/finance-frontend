@@ -5,10 +5,7 @@ export default function ExpensesPage() {
   return (
     <div className="max-w-md mx-auto min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black">
       <MobileHeader title="Gastos" />
-
       <div className="py-4">
-
-
         <ExpenseList />
       </div>
     </div>
